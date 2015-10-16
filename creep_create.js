@@ -1,5 +1,5 @@
-/*
- * Module code goes here. Use 'module.exports' to export things:
+
+dule code goes here. Use 'module.exports' to export things:
  * module.exports = 'a thing';
  *
  * You can import it from another modules like this:
@@ -39,12 +39,12 @@ module.exports = function (spawn, data) {
     }
     
     for(var roler in data) {
-        if (data[roler].max > groups[roler]) {
-            var number = Math.random(10,99);
+        if (data[roler].max > groups[roler] || data[roler].max > 0 && typeof groups[roler] == 'undefined') {
+            var number = Math.random() * 900 + 100;
             if (spawn.createCreep(data[roler].body, 'W' + number,  { role: roler }) == 'W' + number) {
                 console.log('create a creep:' + roler);
+                break;
             }
         }
     }
  }
-
