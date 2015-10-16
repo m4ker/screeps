@@ -2,7 +2,9 @@
  * 矿工
  */
  module.exports = function (creep) {
-    if (Game.spawns.Azeroth.energy == 300)
+    var spawn = creep.pos.findClosestByRange(FIND_MY_SPAWNS);
+     
+    if (spawn.energy == 300)
         return;
         
     var sources = creep.room.find(FIND_SOURCES);
@@ -36,8 +38,8 @@
                 creep.moveTo('wk:ext需要我！');
             }
         } else {
-            if(creep.transferEnergy(Game.spawns.Azeroth) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(Game.spawns.Azeroth);
+            if(creep.transferEnergy(spawn) == ERR_NOT_IN_RANGE) {
+                creep.moveTo(spawn);
             }
         }
     }

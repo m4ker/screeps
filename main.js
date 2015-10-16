@@ -25,7 +25,7 @@ module.exports.loop = function () {
     }
     
     // 监视器
-    monitor();
+    monitor(Game.spawns.Azeroth);
     
     // creep 生产
     creep_create(Game.spawns.Azeroth, {
@@ -51,3 +51,4 @@ module.exports.loop = function () {
         }
     });
 }
+
