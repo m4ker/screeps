@@ -17,9 +17,7 @@
         if(creep.harvest(sources[sourceNo]) == ERR_NOT_IN_RANGE) {
             creep.moveTo(sources[sourceNo]);
         }
-    }
-    else {
-        
+    } else {
         var SR = creep.pos.findClosestByRange(FIND_STRUCTURES, {
                    filter: function(object){
                         if(object.structureType != STRUCTURE_EXTENSION ) {
@@ -35,7 +33,7 @@
         if (SR) {
             if(creep.transferEnergy(SR) == ERR_NOT_IN_RANGE) {
                 creep.moveTo(SR);
-                creep.moveTo('wk:ext需要我！');
+                creep.moveTo('hv:ext need energy！');
             }
         } else {
             if(creep.transferEnergy(spawn) == ERR_NOT_IN_RANGE) {
@@ -44,3 +42,4 @@
         }
     }
 }
+

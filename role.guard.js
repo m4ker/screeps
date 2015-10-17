@@ -2,6 +2,7 @@
  * 守卫
  */
 module.exports = function (creep) {
+    //creep.role='attacker';
     var targets = creep.room.find(FIND_HOSTILE_CREEPS);
     if(targets.length) {
         if(creep.attack(targets[0]) == ERR_NOT_IN_RANGE) {
@@ -11,3 +12,4 @@ module.exports = function (creep) {
         creep.moveTo(15,40);
     }
 }
+

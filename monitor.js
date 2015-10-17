@@ -7,6 +7,7 @@
  */
 module.exports = function (spawn) {
     var groups = {};
+
     for(var name in Game.creeps) {
         var creep = Game.creeps[name];
         var role = creep.memory.role;
@@ -15,6 +16,9 @@ module.exports = function (spawn) {
         }else {
           	groups[role] ++;
         }
+        
+        //if (role == 'harvester2')
+        //console.log(name);
     }
       	
     var monitorString = ' ';
@@ -22,7 +26,7 @@ module.exports = function (spawn) {
         monitorString += roler +":" + groups[roler] + " ";
     }
     
-    console.log("工种:"+monitorString);
-    console.log("能量:" +spawn.energy);
+    console.log("creeps:"+monitorString);
+    console.log("energy:" +spawn.energy);
 }
 
