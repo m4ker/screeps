@@ -1,3 +1,6 @@
+/*
+ * find the rampart 
+ */
 module.exports = function () {
     var min_rampart=null;
 
@@ -10,7 +13,7 @@ module.exports = function () {
             return true;
         }
     });
-    
+
     if (structures.length) {
         for ( i in structures ) {
             if ( min_rampart == null || structures[i].hits < min_rampart.hits) {
@@ -18,6 +21,6 @@ module.exports = function () {
             }
         }
     }
-    
+
     return min_rampart;
 }

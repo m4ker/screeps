@@ -1,5 +1,5 @@
 /*
- * 基地补给
+ * ext补给
  */
 module.exports = function (creep, sc) {
     if(creep.carry.energy < creep.carryCapacity) {
@@ -7,7 +7,7 @@ module.exports = function (creep, sc) {
             if (sc.structureType != undefined && sc.structureType == STRUCTURE_STORAGE) {
                 // from storage
                 creep.moveTo(sc);
-                sc.transferEnergy(creep);
+                spwn.transferEnergy(creep);
             } else {
                 // from sc
                 var target = creep.pos.findClosestByRange(FIND_DROPPED_ENERGY, {
@@ -25,11 +25,23 @@ module.exports = function (creep, sc) {
             }
         }
     }else{
-        var spwn = creep.pos.findClosestByRange(FIND_MY_SPAWNS);
-        if (spwn.energy == spwn.energyCapacity)
-            creep.moveTo(35,35);
-        if(creep.transferEnergy(spwn) == ERR_NOT_IN_RANGE) {
-            creep.moveTo(spwn);
+        var SR = creep.pos.findClosestByRange(FIND_STRUCTURES, {
+            filter: function(object){
+                if(object.structureType != STRUCTURE_EXTENSION) {
+                    return false;
+                }
+                if(object.energy < object.energyCapacity) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        });
+
+        if(SR){
+            if(creep.transferEnergy(SR) == ERR_NOT_IN_RANGE) {
+                creep.moveTo(SR);
+            }
         }
     }
 };

@@ -1,6 +1,8 @@
+/*
+ * find the wall
+ */
 module.exports = function () {
     var min_rampart=null;
-
 
     var structures = Game.rooms.E23N14.find(FIND_STRUCTURES, {
         filter: function(object) {
@@ -10,7 +12,7 @@ module.exports = function () {
             return true;
         }
     });
-    
+
     if (structures.length) {
         for ( i in structures ) {
             if ( min_rampart == null || structures[i].hits < min_rampart.hits) {
@@ -18,6 +20,6 @@ module.exports = function () {
             }
         }
     }
-    
+
     return min_rampart;
 }

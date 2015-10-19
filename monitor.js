@@ -1,9 +1,5 @@
 /*
- * Module code goes here. Use 'module.exports' to export things:
- * module.exports = 'a thing';
- *
- * You can import it from another modules like this:
- * var mod = require('monitor'); // -> 'a thing'
+ * monitor
  */
 module.exports = function (spawn) {
     var groups = {};
@@ -12,21 +8,20 @@ module.exports = function (spawn) {
         var creep = Game.creeps[name];
         var role = creep.memory.role;
         if(groups[role] == undefined){
-            groups[role] = 1 
+            groups[role] = 1
         }else {
-          	groups[role] ++;
+            groups[role] ++;
         }
-        
+
         //if (role == 'harvester2')
         //console.log(name);
     }
-      	
-    var monitorString = ' ';
+
+    var monitorString = "\n";
     for(var roler in groups){
-        monitorString += roler +":" + groups[roler] + " ";
+        monitorString += roler +":" + groups[roler] + "\n";
     }
-    
+
     console.log("creeps:"+monitorString);
     console.log("energy:" +spawn.energy);
 }
-

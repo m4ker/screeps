@@ -2,7 +2,6 @@
  * 维修机器人
  */
 module.exports = function (creep, sc, min) {
-
     if(creep.carry.energy == 0) {
         if (sc) {
             if (sc.structureType != undefined && sc.structureType == STRUCTURE_STORAGE) {
@@ -33,16 +32,17 @@ module.exports = function (creep, sc, min) {
                 spwn.transferEnergy(creep);
             }
         }
-        creep.say('rb:$$$?');
+        creep.say('wb:$$$?');
     }else{
 
         var SR = creep.pos.findClosestByRange(FIND_STRUCTURES, {
             filter: function(object){
-                if(object.structureType != STRUCTURE_RAMPART ) {
+                if(object.structureType != STRUCTURE_WALL ) {
                     return false;
                 }
                 //if(object.hits < object.hitsMax) {
-                if(object.hits <= min.hits + 10000) {
+                max = creep.carryCapacity*100;
+                if(object.hits < min.hits+max) {
                     return true;
                 }
                 return false;
@@ -51,13 +51,13 @@ module.exports = function (creep, sc, min) {
 
         result = creep.repair(SR);
         if (result == OK) {
-            creep.say('rb:ing...');
+            creep.say('wb:ing...');
         } else if (result == ERR_NOT_IN_RANGE) {
             creep.moveTo(SR);
-            creep.say('rb:go！');
+            creep.say('wb:go！');
         } else {
             //console.log(SR.structureType);
-            creep.say('rb:' + result);
+            creep.say('wb:' + result);
         }
     }
 };

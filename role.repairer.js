@@ -1,36 +1,45 @@
 /*
- * 维修机器人
+ * 升级机器人
  */
- module.exports = function (creep) {
-
-    if(creep.carry.energy == 0) {
-        var spwn = creep.pos.findClosestByRange(FIND_MY_SPAWNS);
-        creep.moveTo(spwn);
-        if((spwn) > [199]) {
-            spwn.transferEnergy(creep);
-        }
-        creep.say('rp:我没钱了！');
-    }else{
-        var SR = creep.pos.findClosestByRange(FIND_STRUCTURES, {
-                   filter: function(object){
-                       if(object.structureType != STRUCTURE_ROAD ) {
-                           return false;
-                       }
-                       if(object.hits > object.hitsMax * 0.9) {
+module.exports = function (creep, sc) {
+    if(creep.room.controller) {
+        if(creep.carry.energy == 0) {
+            creep.say('$?');
+            if (sc) {
+                var target = creep.pos.findClosestByRange(FIND_DROPPED_ENERGY, {
+                    filter:function(object){
+                        if (object.pos.x == sc.pos.x && object.pos.y == sc.pos.y) {
+                            return true;
+                        }
                         return false;
-                      }
-                       return true;
-                   } 
-        });     
-        result = creep.repair(SR);
-        if (result == OK) {
-            creep.say('rp:修修修！');
-        } else if (result == ERR_NOT_IN_RANGE) {
-            creep.moveTo(SR);
-            creep.say('rp:跑去修！');
-        } else {
-            //console.log(SR.structureType);
-            creep.say('rp:' + result);
+                    }
+                });
+                result = creep.pickup(target);
+                //console.log(result);
+                if (result != OK) {
+                    creep.moveTo(target);
+                }
+            } else {
+                //var spwn = creep.pos.findClosestByRange(FIND_MY_SPAWNS);
+                var spwn = Game.spawns.Azeroth;
+                creep.moveTo(spwn);
+                if((spwn) > [199]) {
+                    spwn.transferEnergy(creep);
+                }
+            }
+        }else{
+            result = creep.upgradeController(creep.room.controller);
+            if (result == OK) {
+                creep.say('rg:ing...');
+            } else if(result == ERR_NOT_IN_RANGE) {
+                creep.say('rg:go！');
+                creep.moveTo(creep.room.controller);
+            } else {
+                creep.say('rg error:' + result);
+            }
         }
-    } 
+    } else {
+        //creep.say('rg:no controller');
+    }
+
 };
