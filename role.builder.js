@@ -49,6 +49,11 @@ module.exports = function (creep, sc, min) {
                     if(object.structureType != STRUCTURE_WALL ) {
                         return false;
                     }
+
+                    // 字不造
+                    if(object.hits == 1 ) {
+                        return false;
+                    }
                     //if(object.hits < object.hitsMax) {
                     max = creep.carryCapacity * 100;
                     if(object.hits < min.hits+max) {

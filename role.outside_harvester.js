@@ -1,23 +1,29 @@
 /*
  * 采集
  */
-module.exports = function (creep, source_center) {
+module.exports = function (creep, sc) {
     if (creep.room.name == 'E23N14') {
         if (creep.carry.energy > 0) {
-            if (source_center) {
-                x = source_center.pos.x;
-                y = source_center.pos.y;
-                
-                if(creep.pos.x==x && creep.pos.y==y) {
-                    creep.dropEnergy();
+            if (sc) {
+                if (sc.structureType != undefined) {
+                    if(creep.transferEnergy(sc) == ERR_NOT_IN_RANGE) {
+                        creep.moveTo(sc);
+                    }
                 } else {
-                    creep.moveTo(x,y);
+                    x = sc.pos.x;
+                    y = sc.pos.y;
+
+                    if(creep.pos.x==x && creep.pos.y==y) {
+                        creep.dropEnergy();
+                    } else {
+                        creep.moveTo(x,y);
+                    }
                 }
             } else {
                 //var SR = creep.pos.findClosestByRange(FIND_MY_SPAWNS);
                 SR = Game.spawns.Azeroth;
-                if (SR.energy == SR.energyCapacity)
-                    return;
+                //if (SR.energy == SR.energyCapacity)
+                //return;
                 if(creep.transferEnergy(SR) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(SR);
                 }

@@ -1,8 +1,5 @@
-/**
- * Created by maker on 15/10/19.
- */
 /*
- *
+ * 
  */
 module.exports = function (creep) {
     from_room = 'E23N14';

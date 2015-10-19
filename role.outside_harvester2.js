@@ -16,7 +16,8 @@ module.exports = function (creep) {
     } else {
         if (creep.carry.energy < creep.carryCapacity) {
             sources = creep.room.find(FIND_SOURCES);
-            source = sources[parseInt(creep.name.charAt(creep.name.length-2) + creep.name.charAt(creep.name.length-1))%sources.length];
+            //source = sources[parseInt(creep.name.charAt(creep.name.length-2) + creep.name.charAt(creep.name.length-1))%sources.length];
+            source = sources[1];
             result = creep.harvest(source);
             if (result == ERR_NOT_IN_RANGE) {
                 creep.moveTo(source);

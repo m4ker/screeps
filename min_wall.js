@@ -1,25 +1,24 @@
 /*
- * find the wall
+ * monitor
  */
-module.exports = function () {
-    var min_rampart=null;
+module.exports = function (spawn) {
+    var groups = {};
 
-    var structures = Game.rooms.E23N14.find(FIND_STRUCTURES, {
-        filter: function(object) {
-            if(object.structureType != STRUCTURE_WALL ) {
-                return false;
-            }
-            return true;
-        }
-    });
-
-    if (structures.length) {
-        for ( i in structures ) {
-            if ( min_rampart == null || structures[i].hits < min_rampart.hits) {
-                min_rampart = structures[i];
-            }
+    for(var name in Game.creeps) {
+        var creep = Game.creeps[name];
+        var role = creep.memory.role;
+        if(groups[role] == undefined){
+            groups[role] = 1
+        }else {
+            groups[role] ++;
         }
     }
 
-    return min_rampart;
+    var monitorString = "\n";
+    for(var roler in groups){
+        monitorString += roler +":" + groups[roler] + "\n";
+    }
+
+    console.log("creeps:" + monitorString);
+    //console.log("energy:" + spawn.energy);
 }

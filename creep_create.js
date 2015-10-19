@@ -1,57 +1,25 @@
 /*
- * keep creeps 
+ * find the rampart to repair
  */
-module.exports = function (spawn, data) {
-    /*
-     data = {
-     harvester:{
-     max:20,
-     body:[WORK, CARRY, CARRY, MOVE, MOVE]
-     },
-     builder:{
-     max:2,
-     body:[WORK, CARRY, CARRY, MOVE, MOVE]
-     },
-     repairer:{
-     max:2,
-     body:[WORK, CARRY, CARRY, MOVE, MOVE]
-     },
-     upgrader:{
-     max:2,
-     body:[WORK, CARRY, CARRY, MOVE, MOVE]
-     }
-     };
-     */
+module.exports = function (room) {
+    var min_rampart=null;
 
-    var groups = {};
-    for(var name in Game.creeps) {
-        var creep = Game.creeps[name];
-        var role = creep.memory.role;
-        if (creep.ticksToLive > 100) {
-            if(groups[role] == undefined){
-                groups[role] = 1
-            }else {
-                groups[role] ++;
+    var structures = room.find(FIND_MY_STRUCTURES, {
+        filter: function(object) {
+            if(object.structureType != STRUCTURE_RAMPART ) {
+                return false;
+            }
+            return true;
+        }
+    });
+
+    if (structures.length) {
+        for ( i in structures ) {
+            if ( min_rampart == null || structures[i].hits < min_rampart.hits) {
+                min_rampart = structures[i];
             }
         }
     }
 
-    for(var roler in data) {
-        if (data[roler].max > groups[roler] || (data[roler].max > 0 && typeof groups[roler] == 'undefined')) {
-            var number = parseInt(Math.random() * 900 + 100);
-            cname = roler.charAt(0) + number;
-            if (spawn.canCreateCreep(data[roler].body, cname) == OK) {
-                result = spawn.createCreep(data[roler].body, cname,  { role: roler });
-                //console.log(cname);
-                if ( result == cname) {
-                    console.log('create a creep:' + roler);
-                } else {
-                    console.log(result);
-                }
-                return;
-            } else {
-                return;
-            }
-        }
-    }
+    return min_rampart;
 }

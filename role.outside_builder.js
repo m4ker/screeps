@@ -1,53 +1,57 @@
 /*
- * Module code goes here. Use 'module.exports' to export things:
- * module.exports = 'a thing';
- *
- * You can import it from another modules like this:
- * var mod = require('outsidebuilder'); // -> 'a thing'
+ * builder & repairer in other room
+ * pickup droped energy 
  */
- module.exports = function (creep) {
-    if(creep.room.name !="E27N13"){
-        	var pos = new RoomPosition(7,24, 'E27N13');
-		     creep.moveTo(pos) ; 
-		   //  continue;
-    }else {
-	if(creep.carry.energy < creep.carryCapacity) {
-		var sources = creep.room.find(FIND_SOURCES);
-	
-		if(creep.harvest(sources[0]) == ERR_NOT_IN_RANGE) {
-			creep.moveTo(sources[0]);
-		}		
-
-	}
-	else {
-	    if(creep.room.controller.owner=='bobhero'){
-	         if(creep.reserveController(creep.room.controller) == ERR_NOT_IN_RANGE) {
-                          creep.moveTo(creep.room.controller);    
-                         }
-	        
-	    }else {
-
-	    
-	 	var targets = creep.room.find(FIND_CONSTRUCTION_SITES);
-				if(targets.length) {
-				    //if(creep.build(targets[0]) == ERR_NOT_IN_RANGE) {
-					//	creep.moveTo(targets[0].pos);		
-					 
-					//}
-					
-					
-			    for(var i=1;i<20;i++){
-				    for (var aim in targets){
-				        if (targets[aim].pos.inRangeTo( creep.room.find(FIND_SOURCES)[0],i)){
-				            	if(creep.build(targets[aim]) == ERR_NOT_IN_RANGE) {
-						creep.moveTo(targets[aim].pos);		
-						break;
+module.exports = function (creep, to_room) {
+	//to_room   = 'E23N13';
+	if (creep.room.name == to_room) {
+		if(creep.carry.energy == 0) {
+			// pickup
+			var EN = creep.pos.findClosestByRange(FIND_DROPPED_ENERGY);
+			if (EN) {
+				if (creep.pickup(EN) == ERR_NOT_IN_RANGE) {
+					creep.moveTo(EN);
+				}
+			}
+		} else {
+			// working
+			var SR = creep.pos.findClosestByRange(FIND_STRUCTURES, {
+				filter: function(object){
+					if(object.structureType != STRUCTURE_ROAD ) {
+						return false;
 					}
-				        }
-				    }
-			    }
+					if(object.hits < object.hitsMax) {
+						return true;
+					}
+					return false;
+				}
+			});
+			//}
+			result = creep.repair(SR);
+			if (result == OK) {
+				//creep.say('rp:working！');
+			} else if (result == ERR_NOT_IN_RANGE) {
+				creep.moveTo(SR);
+				//creep.say('rp: go！');
+			} else {
+				var targets = creep.room.find(FIND_CONSTRUCTION_SITES);
+				if(targets.length) {
+					result = creep.build(targets[0]);
+					if (result == OK) {
+						//creep.say('bd:working！');
+					} else if(result == ERR_NOT_IN_RANGE) {
+						creep.moveTo(targets[0]);
 
-				}	
+						//creep.say('bd:gogogo！');
+					}
+				} else {
+					creep.moveTo(40, 26);
+				}
+			}
+		}
+	} else {
+		// on the way
+		var to_pos = new RoomPosition(20, 20, to_room);
+		creep.moveTo(to_pos);
 	}
-    }}
 }
