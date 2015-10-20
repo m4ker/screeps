@@ -1,18 +1,30 @@
 var harvester = require('role.harvester');
 var transfer  = require('role.transfer');
 var worker    = require('role.worker');
+var soldier   = require('role.soldier');
 
 var min_rampart    = require('min_rampart');
 var min_wall       = require('min_wall');
 
 // war modules
-var guard    = require('role.guard');
-var attacker = require('role.attacker');
+//var guard    = require('role.guard');
+//var attacker = require('role.attacker');
 
 // other
 var creep_create = require('creep_create');
 
 module.exports.loop = function () {
+
+    //path = Game.creeps['g253'].pos.findPathTo(new RoomPosition(36,24,'E22N15'));
+    //str = '';
+    //for(p of path) {
+    //    str += p.x + ',' + p.y + '  ';
+    //}
+    //console.log(str);
+
+
+
+
     var room     = Game.rooms.E23N14;
     var spawn    = Game.spawns.Azeroth;
 
@@ -101,10 +113,11 @@ module.exports.loop = function () {
                 }
                 break;
             case 'guard':
-                guard(creep);
+                //guard(creep);
+                soldier(creep);
                 break;
             case 'attacker':
-                attacker(creep, Game.flags.Flag1);
+                soldier(creep, Game.flags.Flag1);
                 break;
             case 'rampartbuilder':
                 var rampart = creep.pos.findClosestByRange(FIND_STRUCTURES, {
@@ -231,8 +244,8 @@ module.exports.loop = function () {
             body:[TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH, ATTACK, ATTACK, MOVE]
         },
         attacker:{
-            max:0,
-            body:[TOUGH,TOUGH,TOUGH,TOUGH,TOUGH, ATTACK,ATTACK,ATTACK,ATTACK,ATTACK, MOVE]
+            max:1,
+            body:[TOUGH,ATTACK,MOVE,MOVE]
         }
     });
 
