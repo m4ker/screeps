@@ -1,11 +1,10 @@
 /*
- * find the rampart 
+ * find the rampart to repair
  */
-module.exports = function () {
+module.exports = function (room) {
     var min_rampart=null;
 
-
-    var structures = Game.rooms.E23N14.find(FIND_MY_STRUCTURES, {
+    var structures = room.find(FIND_MY_STRUCTURES, {
         filter: function(object) {
             if(object.structureType != STRUCTURE_RAMPART ) {
                 return false;

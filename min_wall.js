@@ -1,24 +1,29 @@
 /*
- * monitor
+ * find the wall to repair
  */
-module.exports = function (spawn) {
-    var groups = {};
+module.exports = function (room) {
+    var min=null;
 
-    for(var name in Game.creeps) {
-        var creep = Game.creeps[name];
-        var role = creep.memory.role;
-        if(groups[role] == undefined){
-            groups[role] = 1
-        }else {
-            groups[role] ++;
+    var structures = room.find(FIND_STRUCTURES, {
+        filter: function(object) {
+            if(object.structureType != STRUCTURE_WALL ) {
+                return false;
+            }
+            // 字不造
+            if(object.hits === 1 ) {
+                return false;
+            }
+            return true;
+        }
+    });
+
+    if (structures.length) {
+        for ( i in structures ) {
+            if ( min == null || structures[i].hits < min.hits) {
+                min = structures[i];
+            }
         }
     }
 
-    var monitorString = "\n";
-    for(var roler in groups){
-        monitorString += roler +":" + groups[roler] + "\n";
-    }
-
-    console.log("creeps:" + monitorString);
-    //console.log("energy:" + spawn.energy);
+    return min;
 }

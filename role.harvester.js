@@ -1,44 +1,24 @@
 /*
- * 矿工
+ * the harvester in other room
+ *
+ * todo : carry energy to home if no picker
  */
-module.exports = function (creep) {
-    var spawn = creep.pos.findClosestByRange(FIND_MY_SPAWNS);
-
-    if (spawn.energy == 300)
-        return;
-
-    var sources = creep.room.find(FIND_SOURCES);
-
-    last = parseInt(creep.name.charAt(creep.name.length - 1));
-
-    sourceNo = last%2;
-
-    if(creep.carry.energy < creep.carryCapacity) {
-        if(creep.harvest(sources[sourceNo]) == ERR_NOT_IN_RANGE) {
-            creep.moveTo(sources[sourceNo]);
-        }
-    } else {
-        var SR = creep.pos.findClosestByRange(FIND_STRUCTURES, {
-            filter: function(object){
-                if(object.structureType != STRUCTURE_EXTENSION ) {
-                    return false;
-                }
-                if(object.energy < object.energyCapacity) {
-                    return true;
-                }
-                return false;
-            }
-        });
-
-        if (SR) {
-            if(creep.transferEnergy(SR) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(SR);
-                creep.moveTo('hv:ext need energy！');
+module.exports = function (creep, to_room, source_no) {
+    if (creep.room.name == to_room) {
+        var sources = creep.room.find(FIND_SOURCES);
+        if(creep.carry.energy < creep.carryCapacity) {
+            // harvest
+            if(creep.harvest(sources[source_no]) == ERR_NOT_IN_RANGE) {
+                // move to energy
+                creep.moveTo(sources[source_no]);
             }
         } else {
-            if(creep.transferEnergy(spawn) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(spawn);
-            }
+            // drop energy
+            creep.dropEnergy();
         }
+    } else {
+        // move to the target room
+        var pos = new RoomPosition(20, 20, to_room);
+        creep.moveTo(pos) ;
     }
 }

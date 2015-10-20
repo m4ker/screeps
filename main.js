@@ -1,20 +1,7 @@
-// harvest modules
-var outside_harvester  = require('role.outside.harvester');
+var harvester = require('role.harvester');
+var transfer  = require('role.transfer');
+var worker    = require('role.worker');
 
-var outside_carryer_1     = require('role.outside_carryer_1');
-var outside_builder      = require('role.outside.builder');
-
-var outside_carryer_2     = require('role.outside_carryer_2');
-
-// build modules
-var carryer        = require('role.carryer');
-var carryer_sc     = require('role.carryer_sc');
-var homerecharger  = require('role.homerecharger');
-var repairer       = require('role.repairer');
-var upgrader       = require('role.upgrader');
-var builder        = require('role.builder');
-//var wallbuilder    = require('role.wallbuilder');
-var rampartbuilder = require('role.rampartbuilder');
 var min_rampart    = require('min_rampart');
 var min_wall       = require('min_wall');
 
@@ -23,26 +10,16 @@ var guard    = require('role.guard');
 var attacker = require('role.attacker');
 
 // other
-var monitor      = require('monitor');
 var creep_create = require('creep_create');
 
-var source_centers = [
-    {
-        pos:{x:24,y:16},
-        min:1000
-    },
-    {
-        pos:{x:34,y:24},
-        min:10000
-    }
-];
-
 module.exports.loop = function () {
+    var room     = Game.rooms.E23N14;
+    var spawn    = Game.spawns.Azeroth;
 
-    var mrampart = min_rampart(Game.rooms.E23N14);
-    var mwall    = min_wall(Game.rooms.E23N14);
+    var mrampart = min_rampart(room);
+    var mwall    = min_wall(room);
 
-    var structures = Game.rooms.E23N14.find(FIND_MY_STRUCTURES, {
+    var structures = room.find(FIND_MY_STRUCTURES, {
         filter: function(object) {
             if(object.structureType == STRUCTURE_STORAGE ) {
                 return true;
@@ -50,91 +27,175 @@ module.exports.loop = function () {
             return false;
         }
     });
-
     var st = structures[0];
+
+    var up = null;
+    for ( i in Game.creeps ) {
+        if (Game.creeps[i].memory.role == 'upgrader') {
+            up = Game.creeps[i];
+            break;
+        }
+    }
+
+    var sources = room.find(FIND_SOURCES);
+
+    // 要建造的东西
+    var cs = room.find(FIND_CONSTRUCTION_SITES);
 
     for(var name in Game.creeps) {
         var creep = Game.creeps[name];
         //creep.moveTo(20, 20);
         //continue;
-        if(creep.memory.role == 'harvester1') {
-            outside_harvester(creep, 'E23N14', 0);
-        } else if(creep.memory.role == 'harvester2') {
-            outside_harvester(creep, 'E23N14', 1);
-        } else if (creep.memory.role == 'upgrader') {
-            upgrader(creep, source_centers[0]);
-        } else if(creep.memory.role == 'carryer') {
-            carryer(creep, source_centers);
-        } else if(creep.memory.role == 'carryer_sc') {
-            carryer_sc(creep, source_centers);
-        } else if (creep.memory.role == 'guard') {
-            guard(creep);
-        } else if (creep.memory.role == 'repairer') {
-            repairer(creep, st);
-        } else if (creep.memory.role == 'builder') {
-            builder(creep, st, mwall);
-        } else if (creep.memory.role == 'attacker') {
-            attacker(creep, Game.flags.Flag1);
-        } else if (creep.memory.role == 'rampartbuilder') {
-            rampartbuilder(creep, st, mrampart);
-        } else if (creep.memory.role == 'homerecharger') {
-            homerecharger(creep, st);
-        } else if (creep.memory.role == 'outside_harvester_1') {
-            outside_harvester(creep, 'E23N13', 0);
-        } else if (creep.memory.role == 'outside_carryer_1') {
-            outside_carryer_1(creep, st);
-        } else if (creep.memory.role == 'outside_builder') {
-            outside_builder(creep, 'E23N13');
-        } else if (creep.memory.role == 'outside_harvester_2') {
-            outside_harvester(creep, 'E23N15', 1);
-        } else if (creep.memory.role == 'outside_carryer_2') {
-            outside_carryer_2(creep, st);
+        switch(creep.memory.role) {
+            case 'harvester1':
+                harvester(creep, 'E23N14', 0);
+                break;
+            case 'harvester2':
+                harvester(creep, 'E23N14', 1);
+                break;
+            case 'upgrader':
+                worker(creep, room, [{action:'upgrade'}], new RoomPosition(24,16,room.name));
+                break;
+            case 'upgrade_recharger':
+                transfer(creep, st, new RoomPosition(24,16,room.name));
+                break;
+            case 'pickuper':
+                transfer(creep, sources[0].pos, st);
+                break;
+            case 'pickuper2':
+                transfer(creep, sources[1].pos, st);
+                break;
+            case 'repairer':
+                var road = creep.pos.findClosestByRange(FIND_STRUCTURES, {
+                    filter: function(object){
+                        return object.structureType == STRUCTURE_ROAD && object.hits < object.hitsMax;
+                    }
+                });
+                if (road) {
+                    worker(creep, room, [{action:'repair', target:road}], st);
+                }
+                break;
+            case 'builder':
+                if (cs[0] != undefined) {
+                    worker(creep, room, [{action:'build', target:cs[0]}], st);
+                } else {
+                    /*
+                     var road = creep.pos.findClosestByRange(FIND_STRUCTURES, {
+                     filter: function(object){
+                     return object.structureType == STRUCTURE_ROAD && object.hits < object.hitsMax;
+                     }
+                     });
+                     if (road) {
+                     worker(creep, room, [{action:'repair', target:road}], st);
+                     } else {
+                     */
+                    var wall = creep.pos.findClosestByRange(FIND_STRUCTURES, {
+                        filter: function(object){
+                            return object.structureType == STRUCTURE_WALL
+                                && (object.hits < (mwall.hits+creep.carryCapacity * 100))
+                                && object.hits > 1;// 排除hello world
+                        }
+                    });
+                    worker(creep, room, [{action:'repair', target:wall}], st);
+                    //}
+                }
+                break;
+            case 'guard':
+                guard(creep);
+                break;
+            case 'attacker':
+                attacker(creep, Game.flags.Flag1);
+                break;
+            case 'rampartbuilder':
+                var rampart = creep.pos.findClosestByRange(FIND_STRUCTURES, {
+                    filter: function(object){
+                        return object.structureType == STRUCTURE_RAMPART && (object.hits <= (mrampart.hits + 10000));
+                    }
+                });
+                worker(creep, room, [{action:'repair', target:rampart}], st);
+                break;
+            case 'homerecharger':
+                transfer(creep, st, spawn);
+                break;
+            case 'extrecharger':
+                transfer(creep, st, STRUCTURE_EXTENSION);
+                break;
+            case 'outside_harvester_1':
+                harvester(creep, 'E23N13', 0);
+                break;
+            case 'outside_carryer_1':
+                transfer(creep, Game.rooms.E23N13, st);
+                break;
+            case 'outside_builder':
+                var road = Game.rooms.E23N13.find(FIND_STRUCTURES, {
+                    filter: function(object){
+                        return object.structureType == STRUCTURE_ROAD && object.hits < object.hitsMax;
+                    }
+                });
+                console.log(road[0]);
+                if (road) {
+                    worker(creep, Game.rooms.E23N13, [{action:'repair', target:road[0]}], Game.rooms.E23N13);
+                }
+                break;
+            case 'outside_harvester_2':
+                harvester(creep, 'E23N15', 1);
+                break;
+            case 'outside_carryer_2':
+                transfer(creep, Game.rooms.E23N15, st);
+                break;
+            default:
+                console.log('fucker');
+                break;
         }
     }
 
-    creep_create(Game.spawns.Azeroth, {
-        // controller upgrader
-        upgrader:{
-            max:1,
-            body:[WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE]
+    creep_create(spawn, {
+        // 这个设计可以保证 0 creep 启动
+        extrecharger:{
+            max:3,
+            body:[CARRY, CARRY, CARRY, CARRY, MOVE, MOVE]
         },
         // e23n14 source 0 harvester
         harvester1:{
-            max:2,
-            body:[WORK, WORK, WORK, CARRY, MOVE]
+            max:1,
+            body:[WORK, WORK, WORK, WORK, WORK, WORK, CARRY, MOVE, MOVE, MOVE]
+        },
+        // pickup energy to source center or storage
+        pickuper:{
+            max:1,
+            body:[CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE]
         },
         // e23n14 source 1 harvester
         harvester2:{
+            max:1,
+            body:[WORK, WORK, WORK, WORK, WORK, WORK, CARRY, MOVE, MOVE, MOVE]
+        },
+        pickuper2:{
             max:2,
-            body:[WORK, WORK, WORK, CARRY, MOVE]
+            body:[CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE]
         },
         homerecharger:{
-            max:0,
-            body:[CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE]
+            max:1,
+            body:[CARRY, CARRY, MOVE, MOVE]
         },
-        // pickup energy to extension
-        carryer:{
-            max:2,
-            body:[CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE]
+        // controller upgrader
+        upgrader:{
+            max:1,
+            body:[WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE, MOVE]
         },
-        // pickup energy to source center or storage
-        carryer_sc:{
-            max:2,
-            body:[CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE]
-        },
-        recharger:{
-            max:0,
-            body:[CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE]
+        upgrade_recharger:{
+            max:1,
+            body:[CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE]
         },
         // repair && build && repair wall
         builder:{
-            max:4,
-            body:[WORK, WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE]
+            max:5,
+            body:[WORK, WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE]
         },
         // repair
         repairer:{
             max:1,
-            body:[WORK, WORK, CARRY, CARRY, MOVE, MOVE]
+            body:[WORK, CARRY, MOVE, MOVE]
         },
         // repair rampart
         rampartbuilder:{
@@ -143,7 +204,7 @@ module.exports.loop = function () {
         },
         outside_harvester_1:{
             max:1,
-            body:[WORK, WORK, WORK, WORK, WORK, WORK, CARRY, MOVE]
+            body:[WORK, WORK, WORK, WORK, WORK, WORK, CARRY, MOVE, MOVE, MOVE, MOVE]
         },
         outside_carryer_1:{
             max:4,
@@ -151,19 +212,19 @@ module.exports.loop = function () {
         },
         outside_builder:{
             max:1,
-            body:[WORK, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE]
+            body:[WORK, CARRY, MOVE, MOVE]
         },
         outside_harvester_2:{
             max:1,
-            body:[WORK, WORK, WORK, WORK, WORK, WORK, CARRY, MOVE]
+            body:[WORK, WORK, WORK, WORK, WORK, WORK, CARRY, MOVE, MOVE, MOVE, MOVE]
         },
         outside_carryer_2:{
-            max:5,
+            max:4,
             body:[CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE]
         },
         wallbuilder:{
             max:0,
-            body:[WORK, WORK, CARRY, CARRY, MOVE, MOVE]
+            body:[WORK, CARRY, MOVE, MOVE]
         },
         guard:{
             max:1,
