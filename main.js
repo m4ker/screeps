@@ -1,35 +1,33 @@
+/*
+ * 主脚本
+ * main scripts
+ */
+// 引入工种模块
+// role modules
 var harvester = require('role.harvester');
 var transfer  = require('role.transfer');
 var worker    = require('role.worker');
 var soldier   = require('role.soldier');
 
-var min_rampart    = require('min_rampart');
-var min_wall       = require('min_wall');
+// 引入工具模块
+// helper modules
+var min_rampart = require('helper.find_min_rampart');
+var min_wall    = require('helper.find_min_wall');
 
-// war modules
-//var guard    = require('role.guard');
-//var attacker = require('role.attacker');
-
-// other
+// 引入creep生产模块
+// creep creater modules
 var creep_create = require('creep_create');
 
 module.exports.loop = function () {
-
-    //path = Game.creeps['g253'].pos.findPathTo(new RoomPosition(36,24,'E22N15'));
-    //str = '';
-    //for(p of path) {
-    //    str += p.x + ',' + p.y + '  ';
-    //}
-    //console.log(str);
-
-
-
-
+    /*
+     * 这里会定义一系列变量，提供给工种
+     * vars for roles
+     */
     var room     = Game.rooms.E23N14;
     var spawn    = Game.spawns.Azeroth;
 
-    var mrampart = min_rampart(room);
-    var mwall    = min_wall(room);
+    var mrampart = min_rampart(room); // hits 最小的 rampart
+    var mwall    = min_wall(room); // hits 最小的 wall
 
     var structures = room.find(FIND_MY_STRUCTURES, {
         filter: function(object) {
@@ -39,9 +37,9 @@ module.exports.loop = function () {
             return false;
         }
     });
-    var st = structures[0];
+    var st = structures[0]; // storage 存储中心
 
-    var up = null;
+    var up = null; // upgrader 升级工种
     for ( i in Game.creeps ) {
         if (Game.creeps[i].memory.role == 'upgrader') {
             up = Game.creeps[i];
@@ -49,11 +47,12 @@ module.exports.loop = function () {
         }
     }
 
-    var sources = room.find(FIND_SOURCES);
+    var sources = room.find(FIND_SOURCES); // sources for harvester 资源
 
-    // 要建造的东西
+    // construction sites
     var cs = room.find(FIND_CONSTRUCTION_SITES);
 
+    // role controller
     for(var name in Game.creeps) {
         var creep = Game.creeps[name];
         //creep.moveTo(20, 20);
@@ -91,16 +90,6 @@ module.exports.loop = function () {
                 if (cs[0] != undefined) {
                     worker(creep, room, [{action:'build', target:cs[0]}], st);
                 } else {
-                    /*
-                     var road = creep.pos.findClosestByRange(FIND_STRUCTURES, {
-                     filter: function(object){
-                     return object.structureType == STRUCTURE_ROAD && object.hits < object.hitsMax;
-                     }
-                     });
-                     if (road) {
-                     worker(creep, room, [{action:'repair', target:road}], st);
-                     } else {
-                     */
                     var wall = creep.pos.findClosestByRange(FIND_STRUCTURES, {
                         filter: function(object){
                             return object.structureType == STRUCTURE_WALL
@@ -109,11 +98,9 @@ module.exports.loop = function () {
                         }
                     });
                     worker(creep, room, [{action:'repair', target:wall}], st);
-                    //}
                 }
                 break;
             case 'guard':
-                //guard(creep);
                 soldier(creep);
                 break;
             case 'attacker':
@@ -163,7 +150,8 @@ module.exports.loop = function () {
     }
 
     creep_create(spawn, {
-        // 这个设计可以保证 0 creep 启动
+        // extrecharger 可以保证 0 creep 启动
+        // extrecharger make 0 creep start up
         extrecharger:{
             max:3,
             body:[CARRY, CARRY, CARRY, CARRY, MOVE, MOVE]
@@ -183,6 +171,7 @@ module.exports.loop = function () {
             max:1,
             body:[WORK, WORK, WORK, WORK, WORK, WORK, CARRY, MOVE, MOVE, MOVE]
         },
+        // pickup energy to source center or storage
         pickuper2:{
             max:2,
             body:[CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE]
@@ -200,12 +189,12 @@ module.exports.loop = function () {
             max:1,
             body:[CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE]
         },
-        // repair && build && repair wall
+        // build && repair wall
         builder:{
             max:5,
             body:[WORK, WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE]
         },
-        // repair
+        // repair wall
         repairer:{
             max:1,
             body:[WORK, CARRY, MOVE, MOVE]
@@ -241,11 +230,11 @@ module.exports.loop = function () {
         },
         guard:{
             max:1,
-            body:[TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH, ATTACK, ATTACK, MOVE]
+            body:[ATTACK, TOUGH, MOVE, MOVE]
         },
         attacker:{
             max:1,
-            body:[TOUGH,ATTACK,MOVE,MOVE]
+            body:[TOUGH, ATTACK, MOVE, MOVE]
         }
     });
 
