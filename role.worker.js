@@ -1,5 +1,6 @@
 /*
  * 工人
+ * worker
  * todo: 代替 harvester
  */
 module.exports = function (creep, room, works, energy) {
@@ -18,6 +19,7 @@ module.exports = function (creep, room, works, energy) {
      ]
      */
     if (creep.carry.energy == 0) {
+        //creep.say(1);
         if (energy instanceof Structure) {
             if (energy.transferEnergy(creep) == ERR_NOT_IN_RANGE) {
                 creep.moveTo(energy);
@@ -55,6 +57,7 @@ module.exports = function (creep, room, works, energy) {
             }
         }
     } else {
+        //console.log(creep.memory.role);
         if (creep.room.name == room.name) {
             // go to work
             for (i in works) {
@@ -69,13 +72,12 @@ module.exports = function (creep, room, works, energy) {
                         }
                     }
                 } else if (works[i].action == 'repair') {
-                    //creep.say(works[i].target);
                     result = creep.repair(works[i].target);
                     if (result == OK) {
                     } else if (result == ERR_NOT_IN_RANGE) {
                         creep.moveTo(works[i].target);
                     } else {
-                        creep.say(result);
+                        //creep.say(result);
                     }
                     break;
                 } else if (works[i].action == 'upgrade') {
@@ -86,7 +88,6 @@ module.exports = function (creep, room, works, energy) {
                 }
             }
         } else {
-            //creep.say(1);
             // go to room
             creep.moveTo(new RoomPosition(1,1,room.name));
         }

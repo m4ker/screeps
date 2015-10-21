@@ -31,13 +31,17 @@ module.exports.loop = function () {
 
     var structures = room.find(FIND_MY_STRUCTURES, {
         filter: function(object) {
-            if(object.structureType == STRUCTURE_STORAGE ) {
-                return true;
-            }
-            return false;
+            return object.structureType == STRUCTURE_STORAGE;
         }
     });
     var st = structures[0]; // storage 存储中心
+
+    var structures = room.find(FIND_MY_STRUCTURES, {
+        filter: function(object) {
+            return object.structureType == STRUCTURE_LINK;
+        }
+    });
+    var ln = structures[0]; // link
 
     var up = null; // upgrader 升级工种
     for ( i in Game.creeps ) {
@@ -52,6 +56,9 @@ module.exports.loop = function () {
     // construction sites
     var cs = room.find(FIND_CONSTRUCTION_SITES);
 
+    if (up && up.carry.energy < 20)
+        ln.transferEnergy(up);
+
     // role controller
     for(var name in Game.creeps) {
         var creep = Game.creeps[name];
@@ -65,10 +72,12 @@ module.exports.loop = function () {
                 harvester(creep, 'E23N14', 1);
                 break;
             case 'upgrader':
-                worker(creep, room, [{action:'upgrade'}], new RoomPosition(24,16,room.name));
+                //worker(creep, room, [{action:'upgrade'}], new RoomPosition(26,16,room.name));
+                worker(creep, room, [{action:'upgrade'}], null);
                 break;
             case 'upgrade_recharger':
-                transfer(creep, st, new RoomPosition(24,16,room.name));
+                //transfer(creep, st, new RoomPosition(26,16,room.name));
+                transfer(creep, st, ln);
                 break;
             case 'pickuper':
                 transfer(creep, sources[0].pos, st);
@@ -93,8 +102,8 @@ module.exports.loop = function () {
                     var wall = creep.pos.findClosestByRange(FIND_STRUCTURES, {
                         filter: function(object){
                             return object.structureType == STRUCTURE_WALL
-                                && (object.hits < (mwall.hits+creep.carryCapacity * 100))
-                                && object.hits > 1;// 排除hello world
+                                && (object.hits < (mwall.hits+creep.carryCapacity * 100));
+                            //&& object.hits > 1;// 排除hello world
                         }
                     });
                     worker(creep, room, [{action:'repair', target:wall}], st);
@@ -126,15 +135,32 @@ module.exports.loop = function () {
             case 'outside_carryer_1':
                 transfer(creep, Game.rooms.E23N13, st);
                 break;
+            case 'outside_builder_2':
+                var road = Game.rooms.E23N15.find(FIND_STRUCTURES, {
+                    filter: function(object){
+                        return object.structureType == STRUCTURE_ROAD && object.hits < object.hitsMax;
+                    }
+                });
+                if (road instanceof Structure) {
+                    worker(creep, Game.rooms.E23N15, [{action:'repair', target:road[0]}], Game.rooms.E23N15);
+                } else {
+                    var ocs = Game.rooms.E23N15.find(FIND_CONSTRUCTION_SITES);
+                    worker(creep, Game.rooms.E23N15, [{action:'build', target:ocs[0]}], Game.rooms.E23N15);
+                }
+                break;
             case 'outside_builder':
                 var road = Game.rooms.E23N13.find(FIND_STRUCTURES, {
                     filter: function(object){
                         return object.structureType == STRUCTURE_ROAD && object.hits < object.hitsMax;
                     }
                 });
-                console.log(road[0]);
-                if (road) {
+
+                if (road instanceof Structure) {
                     worker(creep, Game.rooms.E23N13, [{action:'repair', target:road[0]}], Game.rooms.E23N13);
+                } else {
+                    //creep.say(1);
+                    var ocs = Game.rooms.E23N13.find(FIND_CONSTRUCTION_SITES);
+                    worker(creep, Game.rooms.E23N13, [{action:'build', target:ocs[0]}], Game.rooms.E23N13);
                 }
                 break;
             case 'outside_harvester_2':
@@ -154,55 +180,55 @@ module.exports.loop = function () {
         // extrecharger make 0 creep start up
         extrecharger:{
             max:3,
-            body:[CARRY, CARRY, CARRY, CARRY, MOVE, MOVE]
+            body:[CARRY, CARRY, CARRY, CARRY, MOVE, MOVE] // OK 
         },
         // e23n14 source 0 harvester
         harvester1:{
             max:1,
-            body:[WORK, WORK, WORK, WORK, WORK, WORK, CARRY, MOVE, MOVE, MOVE]
+            body:[WORK, WORK, WORK, WORK, WORK, WORK, CARRY, MOVE, MOVE, MOVE] // OK
         },
         // pickup energy to source center or storage
         pickuper:{
             max:1,
-            body:[CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE]
+            body:[CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE] // OK
         },
         // e23n14 source 1 harvester
         harvester2:{
             max:1,
-            body:[WORK, WORK, WORK, WORK, WORK, WORK, CARRY, MOVE, MOVE, MOVE]
+            body:[WORK, WORK, WORK, WORK, WORK, WORK, CARRY, MOVE, MOVE, MOVE] // OK
         },
         // pickup energy to source center or storage
         pickuper2:{
             max:2,
-            body:[CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE]
+            body:[CARRY, CARRY, CARRY, CARRY, MOVE, MOVE] // OK
         },
         homerecharger:{
             max:1,
-            body:[CARRY, CARRY, MOVE, MOVE]
+            body:[CARRY, CARRY, MOVE] // OK
         },
         // controller upgrader
         upgrader:{
             max:1,
-            body:[WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE, MOVE]
+            body:[WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, CARRY, MOVE, MOVE, MOVE, MOVE]
         },
         upgrade_recharger:{
             max:1,
-            body:[CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE]
+            body:[CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE] // OK
         },
         // build && repair wall
         builder:{
             max:5,
-            body:[WORK, WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE]
+            body:[WORK, WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE] // OK
         },
-        // repair wall
+        // repair road
         repairer:{
-            max:1,
-            body:[WORK, CARRY, MOVE, MOVE]
+            max:2,
+            body:[WORK, CARRY, MOVE] // OK
         },
         // repair rampart
         rampartbuilder:{
             max:1,
-            body:[WORK, CARRY, CARRY, MOVE, MOVE]
+            body:[WORK, CARRY, CARRY, MOVE, MOVE] // OK
         },
         outside_harvester_1:{
             max:1,
@@ -210,11 +236,11 @@ module.exports.loop = function () {
         },
         outside_carryer_1:{
             max:4,
-            body:[CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE]
+            body:[CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE]
         },
         outside_builder:{
             max:1,
-            body:[WORK, CARRY, MOVE, MOVE]
+            body:[WORK, WORK, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE]
         },
         outside_harvester_2:{
             max:1,
@@ -222,11 +248,15 @@ module.exports.loop = function () {
         },
         outside_carryer_2:{
             max:4,
-            body:[CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE]
+            body:[CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE]
+        },
+        outside_builder_2:{
+            max:1,
+            body:[WORK, WORK, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE]
         },
         wallbuilder:{
             max:0,
-            body:[WORK, CARRY, MOVE, MOVE]
+            body:[WORK, CARRY, MOVE] // OK
         },
         guard:{
             max:1,
@@ -234,7 +264,11 @@ module.exports.loop = function () {
         },
         attacker:{
             max:1,
-            body:[TOUGH, ATTACK, MOVE, MOVE]
+            body:[
+                TOUGH,
+                ATTACK,
+                MOVE, MOVE,
+            ]
         }
     });
 

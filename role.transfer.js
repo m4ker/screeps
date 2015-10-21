@@ -12,7 +12,7 @@ module.exports = function (creep, from, to) {
                 creep.moveTo(from);
             }
         } else if (from instanceof RoomPosition) {
-            // todo: from drop energy 
+            // from drop energy 
             if (creep.room.name != from.roomName) {
                 creep.moveTo(from);
             } else {
