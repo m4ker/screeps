@@ -109,12 +109,14 @@ module.exports.loop = function () {
                     worker(creep, room, [{action:'repair', target:wall}], st);
                 }
                 break;
+            /*
             case 'guard':
                 soldier(creep);
                 break;
             case 'attacker':
                 soldier(creep, Game.flags.Flag1);
                 break;
+             */
             case 'rampartbuilder':
                 var rampart = creep.pos.findClosestByRange(FIND_STRUCTURES, {
                     filter: function(object){
@@ -154,11 +156,9 @@ module.exports.loop = function () {
                         return object.structureType == STRUCTURE_ROAD && object.hits < object.hitsMax;
                     }
                 });
-
                 if (road instanceof Structure) {
                     worker(creep, Game.rooms.E23N13, [{action:'repair', target:road[0]}], Game.rooms.E23N13);
                 } else {
-                    //creep.say(1);
                     var ocs = Game.rooms.E23N13.find(FIND_CONSTRUCTION_SITES);
                     worker(creep, Game.rooms.E23N13, [{action:'build', target:ocs[0]}], Game.rooms.E23N13);
                 }
@@ -169,9 +169,32 @@ module.exports.loop = function () {
             case 'outside_carryer_2':
                 transfer(creep, Game.rooms.E23N15, st);
                 break;
+            /*
+            case 'e24n14_builder':
+                 var road = Game.rooms.E24N14.find(FIND_STRUCTURES, {
+                 filter: function(object){
+                 return object.structureType == STRUCTURE_ROAD && object.hits < object.hitsMax;
+                 }
+                 });
+
+                 if (road instanceof Structure) {
+                 worker(creep, Game.rooms.E24N14, [{action:'repair', target:road[0]}], spawn);
+                 } else {
+                 var ocs = Game.rooms.E24N14.find(FIND_CONSTRUCTION_SITES);
+                 worker(creep, Game.rooms.E24N14, [{action:'build', target:ocs[0]}], spawn);
+                 }
+                break;
+            case 'e24n14_harvester_0':
+                harvester(creep, 'E24N14', 0);
+                break;
+            case 'e24n14_carryer_0':
+                transfer(creep, Game.rooms.E24N14, st);
+                break;
+             */
             default:
                 console.log('fucker');
                 break;
+
         }
     }
 
@@ -257,19 +280,35 @@ module.exports.loop = function () {
         wallbuilder:{
             max:0,
             body:[WORK, CARRY, MOVE] // OK
-        },
+        }/*,
         guard:{
-            max:1,
+            max:0,
             body:[ATTACK, TOUGH, MOVE, MOVE]
         },
         attacker:{
-            max:1,
+            max:0,
             body:[
                 TOUGH,
                 ATTACK,
                 MOVE, MOVE,
             ]
+        },
+        e24n14_harvester_0:{
+            max:0,
+            body:[WORK, WORK, WORK, WORK, WORK, WORK, CARRY, MOVE, MOVE, MOVE, MOVE],
+            room:Game.rooms.E24N14
+        },
+        e24n14_carryer_0:{
+            max:0,
+            body:[CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE],
+            room:Game.rooms.E24N14
+        },
+        e24n14_builder:{
+            max:0,
+            body:[WORK, CARRY, MOVE, MOVE],
+            room:Game.rooms.E24N14
         }
+        */
     });
 
     // clear memory

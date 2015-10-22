@@ -47,7 +47,17 @@ module.exports = function (spawn, data) {
     for(var roler in data) {
         if (data[roler].max > groups[roler] || (data[roler].max > 0 && typeof groups[roler] == 'undefined')) {
             var number = parseInt(Math.random() * 900 + 100);
-            cname = roler.charAt(0) + number;
+            cname = roler.charAt(0) + number
+            if (data[roler].room !== undefined) {
+                // 在目标房间查找 Source Keeper
+                sk = data[roler].room.find(FIND_HOSTILE_CREEPS, { filter: function(i) {
+                    return i.owner.username == 'Source Keeper';
+                }});
+                if (sk[0] !== undefined) {
+                    // 如果发现 Source Keeper ，则不生产该 creep
+                    continue;
+                }
+            }
             if (spawn.canCreateCreep(data[roler].body, cname) == OK) {
                 result = spawn.createCreep(data[roler].body, cname,  { role: roler });
                 if ( result == cname) {
