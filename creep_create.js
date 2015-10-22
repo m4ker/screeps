@@ -41,8 +41,8 @@ module.exports = function (spawn, data) {
         monitorString += roler +":" + groups[roler] + "\n";
     }
 
-    console.log("creeps:" + monitorString);
-    console.log("energy:" + spawn.room.energyAvailable);
+    //console.log("creeps:" + monitorString);
+    //console.log("energy:" + spawn.room.energyAvailable);
 
     for(var roler in data) {
         if (data[roler].max > groups[roler] || (data[roler].max > 0 && typeof groups[roler] == 'undefined')) {

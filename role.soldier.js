@@ -3,7 +3,7 @@
  */
 module.exports = function (creep, flag, friends) {
     if (flag) {
-        console.log(flag.pos.roomName);
+        //console.log(flag.pos.roomName);
         // 巡逻 or 进攻模式
         if (flag.pos.roomName != creep.room.name) {
             creep.moveTo(new RoomPosition(1,1,flag.pos.roomName));

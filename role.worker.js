@@ -4,6 +4,7 @@
  * todo: 代替 harvester
  */
 module.exports = function (creep, room, works, energy) {
+    cpu_usage = Game.getUsedCpu();
     /*
      energy: storage, energy, null
 
@@ -57,11 +58,14 @@ module.exports = function (creep, room, works, energy) {
             }
         }
     } else {
+
         //console.log(creep.memory.role);
         if (creep.room.name == room.name) {
+
             // go to work
             for (i in works) {
                 if (works[i].action == 'build') {
+                    //creep.say(5);
                     var targets = creep.room.find(FIND_CONSTRUCTION_SITES);
                     if(targets.length) {
                         result = creep.build(targets[0]);
@@ -72,6 +76,7 @@ module.exports = function (creep, room, works, energy) {
                         }
                     }
                 } else if (works[i].action == 'repair') {
+                    //creep.say(6);
                     result = creep.repair(works[i].target);
                     if (result == OK) {
                     } else if (result == ERR_NOT_IN_RANGE) {
@@ -81,6 +86,7 @@ module.exports = function (creep, room, works, energy) {
                     }
                     break;
                 } else if (works[i].action == 'upgrade') {
+                    //creep.say(7);
                     if (creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
                         creep.moveTo(creep.room.controller);
                     }
@@ -88,8 +94,12 @@ module.exports = function (creep, room, works, energy) {
                 }
             }
         } else {
+            //creep.say(4);
             // go to room
-            creep.moveTo(new RoomPosition(1,1,room.name));
+            creep.moveTo(new RoomPosition(20,20,room.name));
         }
     }
+    cpu_usage2 = Game.getUsedCpu() - cpu_usage;
+    if (cpu_usage2 > 1)
+        console.log(creep.memory.role + ' cpu used:' + cpu_usage2);
 }

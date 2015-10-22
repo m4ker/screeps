@@ -21,7 +21,8 @@ module.exports = function (creep, from, to) {
             // from drop energy 
             cpu_usage = Game.getUsedCpu();
             if (creep.room.name != from.roomName) {
-                creep.moveTo(from);
+                //creep.moveTo(from);
+                move_to_room(creep, from);
             } else {
                 // find and pickup
                 var EN = creep.pos.findClosestByRange(FIND_DROPPED_ENERGY, {
@@ -44,13 +45,7 @@ module.exports = function (creep, from, to) {
             if (creep.room.name != from.name) {
                 cpu_usage = Game.getUsedCpu();
 
-                //console.log(move_to_room);
-
-                rp = new RoomPosition(1,1,from.name)
-                creep.moveTo(rp);
-                //creep.say('!');
-
-                //move_to_room(creep, from);
+                move_to_room(creep, from);
 
                 cpu_usage2 = Game.getUsedCpu() - cpu_usage;
                 if (cpu_usage2 > 1)
@@ -73,20 +68,21 @@ module.exports = function (creep, from, to) {
 
         }
     } else {
-
         // on the way to transfer
         if (to instanceof Structure || to instanceof Spawn || to instanceof Creep ) {
             cpu_usage = Game.getUsedCpu();
-            /*
-             if (creep.room.name == to.room.name) {
-             if (creep.transferEnergy(to) == ERR_NOT_IN_RANGE) {
-             creep.moveTo(to);
-             }
-             } else {
-             move_to_room(creep, to.room);
-             }*/
-            if (creep.transferEnergy(to) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(to);
+            //if (creep.transferEnergy(to) == ERR_NOT_IN_RANGE) {
+            //    creep.moveTo(to);
+            //}
+            if (creep.room.name == to.room.name) {
+                //if (creep.name == 'test') console.log('A');
+                if (creep.transferEnergy(to) == ERR_NOT_IN_RANGE) {
+                    //if (creep.name == 'test') console.log('B');
+                    creep.moveTo(to);
+                }
+            } else {
+                //if (creep.name == 'test') console.log('C');
+                move_to_room(creep, to.room);
             }
             cpu_usage2 = Game.getUsedCpu() - cpu_usage;
             if (cpu_usage2 > 1)
@@ -116,6 +112,7 @@ module.exports = function (creep, from, to) {
                     }
                 }
             });
+
             if(creep.transferEnergy(SR) == ERR_NOT_IN_RANGE) {
                 creep.moveTo(SR);
             }
