@@ -10,9 +10,9 @@ module.exports = function (room) {
                 return false;
             }
             // 字不造
-            if(object.hits === 1 ) {
-                return false;
-            }
+            //if(object.hits === 1 ) {
+            //    return false;
+            //}
             return true;
         }
     });

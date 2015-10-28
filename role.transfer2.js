@@ -20,8 +20,12 @@ module.exports = function (creep, from, to) {
         } else if (from instanceof RoomPosition) {
             // from drop energy 
             cpu_usage = Game.getUsedCpu();
+            //console.log(creep.memory.role);
+            //console.log(creep.room.name );
+            //console.log(from.roomName );
             if (creep.room.name
                 != from.roomName) {
+                //creep.moveToRoom(from);
                 //creep.moveTo(from);
                 move_to_room(creep, Game.rooms[from.roomName]);
             } else {
@@ -67,16 +71,24 @@ module.exports = function (creep, from, to) {
                 if (cpu_usage2 > 1)
                     console.log(creep.memory.role + ' p3.2 cpu used:' + cpu_usage2);
             }
+
         }
     } else {
         // on the way to transfer
         if (to instanceof Structure || to instanceof Spawn || to instanceof Creep ) {
             cpu_usage = Game.getUsedCpu();
+            //if (creep.transferEnergy(to) == ERR_NOT_IN_RANGE) {
+            //    creep.moveTo(to);
+            //}
             if (creep.room.name == to.room.name) {
+                //if (creep.name == 'test') console.log('A');
                 if (creep.transferEnergy(to) == ERR_NOT_IN_RANGE) {
+                    //if (creep.name == 'test') console.log('B');
                     creep.moveTo(to);
                 }
             } else {
+                //if (creep.name == 'test') console.log('C');
+                //creep.moveToRoom(to.room);
                 move_to_room(creep, to.room);
             }
             cpu_usage2 = Game.getUsedCpu() - cpu_usage;

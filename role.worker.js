@@ -1,6 +1,7 @@
 /*
  * 工人
  * worker
+ * todo: 代替 harvester
  */
 var move_to_room =  require('helper.move_to_room');
 module.exports = function (creep, room, works, energy) {
@@ -70,6 +71,7 @@ module.exports = function (creep, room, works, energy) {
             // go to work
             for (i in works) {
                 if (works[i].action == 'build') {
+                    //creep.say(5);
                     var targets = creep.room.find(FIND_CONSTRUCTION_SITES);
                     if(targets.length) {
                         if (targets[0].room.name == creep.room.name) {
@@ -84,6 +86,7 @@ module.exports = function (creep, room, works, energy) {
                         }
                     }
                 } else if (works[i].action == 'repair') {
+                    //creep.say(6);
                     if (creep.room.name == works[i].target.room.name) {
                         result = creep.repair(works[i].target);
                         if (result == OK) {
@@ -97,6 +100,7 @@ module.exports = function (creep, room, works, energy) {
                     }
                     break;
                 } else if (works[i].action == 'upgrade') {
+                    //creep.say(7);
                     if (creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
                         creep.moveTo(creep.room.controller);
                     }
@@ -104,6 +108,9 @@ module.exports = function (creep, room, works, energy) {
                 }
             }
         } else {
+            //creep.say(4);
+            //console.log(creep);
+            //console.log(room);
             // go to room
             console.log(room);
             move_to_room(creep, room);

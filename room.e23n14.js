@@ -42,18 +42,26 @@ module.exports = function () {
         // controller upgrader
         upgrader: {
             max: 1,
-            body: [WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE],
+            body: [
+                WORK, WORK, WORK, WORK, WORK,
+                WORK, WORK, WORK, WORK, WORK,
+                WORK, WORK, WORK, WORK, WORK,
+                WORK,
+                CARRY, CARRY,
+                MOVE, MOVE, MOVE, MOVE, MOVE,
+                MOVE
+            ],
             condition: true
         },
         upgrade_recharger: {
             max: 1,
-            body: [CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE], // OK
+            body: [CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE], // OK
             condition: true
         },
         // build && repair wall
         builder: {
-            max: 3,
-            body: [WORK, WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE], // OK
+            max: 1,
+            body: [WORK, WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE], // OK
             condition: true
         },
         // repair road
@@ -64,8 +72,8 @@ module.exports = function () {
         },
         // repair rampart
         rampartbuilder: {
-            max: 1,
-            body: [WORK, CARRY, CARRY, MOVE, MOVE], // OK
+            max: 2,
+            body: [WORK, WORK, CARRY, CARRY, MOVE, MOVE], // OK
             condition: true
         },
 
@@ -81,21 +89,24 @@ module.exports = function () {
          condition:true
          },
          */
-        draenor_harvester_1: {
-            max: 1,
-            body: [WORK, WORK, WORK, WORK, WORK, WORK, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE],
-            condition: true
-        },
-        draenor_harvester_2: {
-            max: 1,
-            body: [WORK, WORK, WORK, WORK, WORK, WORK, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE],
-            condition: true
-        },
-        draenor_builder: {
-            max: 2,
-            body: [WORK, WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE],
-            condition: true
-        },
+        /*
+         draenor_harvester_1: {
+         max: 1,
+         body: [WORK, WORK, WORK, WORK, WORK, WORK, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE],
+         condition: true
+         },
+         draenor_harvester_2: {
+         max: 1,
+         body: [WORK, WORK, WORK, WORK, WORK, WORK, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE],
+         condition: true
+         },
+         draenor_builder: {
+         max: 2,
+         body: [WORK, WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE],
+         condition: true
+         },
+         */
+
         outside_harvester_1: {
             max: 1,
             body: [WORK, WORK, WORK, WORK, WORK, WORK, CARRY, MOVE, MOVE, MOVE, MOVE],
@@ -108,7 +119,7 @@ module.exports = function () {
         },
         outside_builder: {
             max: 2,
-            body: [WORK, WORK, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE],
+            body: [WORK, CARRY, CARRY, CARRY, MOVE, MOVE],
             condition: true
         },
 
@@ -125,7 +136,7 @@ module.exports = function () {
         },
         outside_builder_2: {
             max: 2,
-            body: [WORK, WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE],
+            body: [WORK, CARRY, CARRY, CARRY, MOVE, MOVE],
             condition: true
         },
 
