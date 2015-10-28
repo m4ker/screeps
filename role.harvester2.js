@@ -3,28 +3,23 @@
  *
  * todo : carry energy to home if no picker
  */
-
-module.exports = function (creep, to_room, source_no) {
+var move_to_room =  require('helper.move_to_room');
+module.exports = function (creep, source) {
     cpu_usage = Game.getUsedCpu();
-    if (creep.room.name == to_room) {
-        //creep.say(1);
-        var sources = creep.room.find(FIND_SOURCES);
+    if (creep.room.name == source.room.name) {
         if(creep.carry.energy < creep.carryCapacity) {
             // harvest
-            if(creep.harvest(sources[source_no]) == ERR_NOT_IN_RANGE) {
+            if(creep.harvest(source) == ERR_NOT_IN_RANGE) {
                 // move to energy
-                creep.moveTo(sources[source_no]);
+                creep.moveTo(source);
             }
         } else {
             // drop energy
             creep.dropEnergy();
         }
     } else {
-        //creep.say(1);
         // move to the target room
-        //move_to_room(creep, Game.rooms[to_toom]);
-        var pos = new RoomPosition(20, 20, to_room);
-        creep.moveTo(pos) ;
+        move_to_room(creep, source.room.name);
     }
     cpu_usage2 = Game.getUsedCpu() - cpu_usage;
     if (cpu_usage2 > 1)
