@@ -34,7 +34,7 @@ module.exports.loop = function () {
     var mrampart = min_rampart(room); // hits 最小的 rampart
     var mwall    = min_wall(room); // hits 最小的 wall
 
-    var e24n13_min_rampart = null;
+    var e24n13_min_rampart = min_rampart(Game.rooms.E24N13);
     var e24n13_min_wall = min_wall(Game.rooms.E24N13);
 
     var st = Game.getObjectById('56237cff1d01d2c234a7abbf'); // storage 存储中心
@@ -65,15 +65,26 @@ module.exports.loop = function () {
     var cs = room.find(FIND_CONSTRUCTION_SITES);
 
     //var E23N15_sources = Game.rooms.E23N15.find(FIND_SOURCES);
+    /*
     var E23N15_sources = [
         Game.getObjectById('55db3423efa8e3fe66e05c0a'),
         Game.getObjectById('55db3423efa8e3fe66e05c0b')
     ];
-
+    */
     var E24N13_sources = Game.rooms.E24N13.find(FIND_SOURCES);
 
     if (up && up.carry.energy < 20)
         ln.transferEnergy(up);
+
+
+    // 战争相关
+    e23n15_army = Game.rooms.E23N15.find(FIND_HOSTILE_CREEPS);
+    e23n14_army = Game.rooms.E23N14.find(FIND_HOSTILE_CREEPS);
+    e23n13_army = Game.rooms.E23N13.find(FIND_HOSTILE_CREEPS);
+
+    e24n13_army = Game.rooms.E24N13.find(FIND_HOSTILE_CREEPS);
+    e24n12_army = Game.rooms.E24N12.find(FIND_HOSTILE_CREEPS);
+
 
     // role controller
     for(var name in Game.creeps) {
@@ -190,10 +201,10 @@ module.exports.loop = function () {
                 transfer2(creep, Game.rooms.E23N13, st);
                 break;
             case 'outside_carryer_2':
-                transfer2(creep, E23N15_sources[1].pos, st);
+                transfer2(creep, Game.getObjectById('55db3423efa8e3fe66e05c0b').pos, st);
                 break;
             case 'outside_carryer_3':
-                transfer2(creep, E23N15_sources[0].pos, st);
+                transfer2(creep, Game.getObjectById('55db3423efa8e3fe66e05c0a').pos, st);
                 break;
             case 'draenor_harvester_1':
                 if (creep.room.name == 'E23N14') {

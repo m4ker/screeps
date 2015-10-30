@@ -28,6 +28,10 @@ module.exports =  function (creep, room) {
             E23N14 : {
                 x:11,
                 y:49
+            },
+            E22N15 : {
+                x:0,
+                y:46
             }
         },
         E24N14 : {
