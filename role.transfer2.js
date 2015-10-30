@@ -23,12 +23,12 @@ module.exports = function (creep, from, to) {
             //console.log(creep.memory.role);
             //console.log(creep.room.name );
             //console.log(from.roomName );
-            if (creep.room.name
-                != from.roomName) {
+            if (creep.room.name != from.roomName) {
                 //creep.moveToRoom(from);
                 //creep.moveTo(from);
                 move_to_room(creep, Game.rooms[from.roomName]);
             } else {
+
                 // find and pickup
                 var EN = creep.pos.findClosestByRange(FIND_DROPPED_ENERGY, {
                     filter:function(object) {

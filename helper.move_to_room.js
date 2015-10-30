@@ -58,6 +58,10 @@ module.exports =  function (creep, room) {
             E24N13 : {
                 x:42,
                 y:0
+            },
+            E25N12 : {
+                x:49,
+                y:38
             }
         },
         E23N16 : {
@@ -66,14 +70,34 @@ module.exports =  function (creep, room) {
                 y:49
             }
         },
+        E25N12 : {
+            E25N13 : {
+                x:43,
+                y:0
+            }
+        },
+        E24N14 : {
+            E25N14 : {
+                x: 49,
+                y: 37
+            }
+        },
+        E25N14 : {
+            E25N13 : {
+                x: 11,
+                y: 49
+            }
+        }
     };
     //console.log(creep.room.name);
     //console.log(room.name);
-    if (
-        creep.pos.x
-        != data[creep.room.name][room.name].x
-        || creep.pos.y
-        != data[creep.room.name][room.name].y) {
-        creep.moveTo(data[creep.room.name][room.name].x,data[creep.room.name][room.name].y);
+    if (data[creep.room.name][room.name] != undefined) {
+        if (
+            creep.pos.x!= data[creep.room.name][room.name].x || creep.pos.y != data[creep.room.name][room.name].y) {
+            creep.moveTo(data[creep.room.name][room.name].x,data[creep.room.name][room.name].y);
+        }
+    } else {
+        console.log('move_to_room:',creep.room.name,' ',room.name)
+        creep.moveTo(new RoomPosition(1,1,room.name));
     }
 }

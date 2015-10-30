@@ -1,27 +1,14 @@
 /*
  * 守卫
  */
-module.exports = function (creep, rampart) {
-    // todo: rampart 填充的算法还需要研究
-    creep_on_rampart = false;
-    list = creep.pos.lookForAt('structure');
-    for (o of list) {
-        if (o.structureType == STRUCTURE_RAMPART) {
-            creep_at_rampart = true;
-        }
-    }
-    if (creep_on_rampart) {
-        range_attack = true;
-        if (range_attack) {
-            army = creep.pos.findInRange(FIND_HOSTILE_CREEPS, 3);
-            if (army[0] != undefined) {
-                // rangeAttack
-                creep.rangeAttach(army[0]);
-            }
-        } else {
-            // todo:attack
+module.exports = function (creep) {
+    target = creep.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
+    if (target != null) {
+        if (creep.attack(target) == ERR_NOT_IN_RANGE) {
+            creep.moveTo(target);
         }
     } else {
-        creep.moveTo(rampart);
+        // 巡逻
+        creep.moveTo(10,10);
     }
 }
