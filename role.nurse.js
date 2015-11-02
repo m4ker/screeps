@@ -34,4 +34,3 @@ module.exports = function (creep, flag, friends) {
         }
     }
 }
-

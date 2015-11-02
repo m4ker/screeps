@@ -1,12 +1,12 @@
 // draenor
 
-var creep_create = require('creep_create');
+var creep_create = require('creep_create2');
 
 module.exports = function () {
 
     army = Game.rooms.E24N13.find(FIND_HOSTILE_CREEPS);
 
-    creep_create(Game.spawns.Draenor, {
+    creep_create(Game.rooms.E24N13, {
         draenor_extrecharger: {
             max: 3,
             body: [CARRY, CARRY, CARRY, CARRY, MOVE, MOVE], // OK
@@ -23,26 +23,22 @@ module.exports = function () {
                 ATTACK,ATTACK,MOVE,
                 ATTACK,ATTACK,MOVE,
                 ATTACK,ATTACK,MOVE,
-                ATTACK,ATTACK,MOVE,
-                ATTACK,ATTACK,MOVE
+                //ATTACK,ATTACK,MOVE,
+                //ATTACK,ATTACK,MOVE
             ],
             condition: army.length > 0
         },
         draenor_harvester_1: {
             max: 1,
-            body: [WORK, WORK, WORK, WORK, WORK, WORK, CARRY, MOVE, MOVE, MOVE],
+            body: [WORK, WORK, WORK, WORK, WORK, MOVE, MOVE, MOVE],
             condition: true
         },
         draenor_harvester_2: {
             max: 1,
-            body: [WORK, WORK, WORK, WORK, WORK, WORK, CARRY, MOVE, MOVE, MOVE],
+            body: [WORK, WORK, WORK, WORK, WORK, MOVE, MOVE, MOVE],
             condition: true
         },
-        draenor_builder: {
-            max: 5,
-            body: [WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE],
-            condition: true
-        },
+
         // pickup energy to source center or storage
         draenor_pickuper1: {
             max: 2,
@@ -63,49 +59,67 @@ module.exports = function () {
         // controller upgrader
         draenor_upgrader: {
             max: 1,
-            body: [WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE],
+            body: [
+                WORK, WORK, WORK, WORK, WORK,
+                WORK, WORK, WORK, WORK, WORK,
+                WORK, WORK, WORK, WORK, WORK,
+                CARRY, CARRY, CARRY, CARRY, CARRY,
+                CARRY,
+                MOVE, MOVE, MOVE, MOVE, MOVE,
+                MOVE, MOVE
+            ],
             condition: true
         },
         draenor_upgrader_recharger: {
             max: 1,
-            body: [CARRY, CARRY, CARRY, CARRY, CARRY, CARRY,CARRY, CARRY, MOVE, MOVE, MOVE, MOVE], // OK
+            body: [
+                CARRY, CARRY, CARRY, CARRY, CARRY,
+                CARRY, CARRY, CARRY, CARRY, CARRY,
+                MOVE, MOVE, MOVE, MOVE, MOVE
+            ], // OK
             condition: true
         },
-        spawn_harvester : {
-            max : 1,
-            body : [WORK, WORK, WORK, WORK, WORK, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE],
-            condition: true
-        },
-        spawn_harvester2 : {
-            max : 1,
-            body : [WORK, WORK, WORK, WORK, WORK, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE],
-            condition: true
-        },
+        /*
+         spawn_harvester : {
+         max : 1,
+         body : [WORK, WORK, WORK, WORK, WORK, MOVE, MOVE, MOVE, MOVE, MOVE],
+         condition: true
+         },
+         spawn_harvester2 : {
+         max : 1,
+         body : [WORK, WORK, WORK, WORK, WORK, MOVE, MOVE, MOVE, MOVE, MOVE],
+         condition: true
+         },
+         */
         e24n12_harvester_1 : {
             max: 1,
-            body: [WORK, WORK, WORK, WORK, WORK, WORK, CARRY, MOVE, MOVE, MOVE, MOVE],
+            body: [WORK, WORK, WORK, WORK, WORK, MOVE, MOVE, MOVE],
             condition: true
         },
         e24n12_carryer_1 : {
-            max: 3,
+            max: 2,
             body: [
                 CARRY, CARRY, CARRY, CARRY, CARRY,
-                CARRY, CARRY, CARRY,
-                MOVE, MOVE, MOVE, MOVE
+                CARRY, CARRY, CARRY, CARRY, CARRY,
+                CARRY, CARRY,
+                MOVE, MOVE, MOVE, MOVE, MOVE,
+                MOVE
             ],
             condition: true
         },
         e24n12_harvester_2 : {
             max: 1,
-            body: [WORK, WORK, WORK, WORK, WORK, WORK, CARRY, MOVE, MOVE, MOVE, MOVE],
+            body: [WORK, WORK, WORK, WORK, WORK, MOVE, MOVE, MOVE],
             condition: true
         },
         e24n12_carryer_2 : {
-            max: 4,
+            max: 3,
             body: [
                 CARRY, CARRY, CARRY, CARRY, CARRY,
-                CARRY, CARRY, CARRY,
-                MOVE, MOVE, MOVE, MOVE
+                CARRY, CARRY, CARRY, CARRY, CARRY,
+                CARRY, CARRY,
+                MOVE, MOVE, MOVE, MOVE, MOVE,
+                MOVE
             ],
             condition: true
         },
@@ -121,7 +135,25 @@ module.exports = function () {
         },
         e24n13_rampartbuilder: {
             max: 1,
-            body: [WORK, CARRY, CARRY, MOVE],
+            body: [
+                WORK, WORK, WORK, WORK, WORK,
+                CARRY, CARRY, CARRY, CARRY, CARRY,
+                MOVE, MOVE, MOVE, MOVE, MOVE
+            ],
+            condition: true
+        },
+        scout: {
+            max: 0,
+            body: [MOVE],
+            condition: true
+        },
+        draenor_builder: {
+            max: 3,
+            body: [
+                WORK, WORK, WORK, WORK, WORK,
+                CARRY, CARRY, CARRY, CARRY, CARRY,
+                MOVE, MOVE, MOVE, MOVE, MOVE, MOVE
+            ],
             condition: true
         }
     });

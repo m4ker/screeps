@@ -1,12 +1,15 @@
 // azeroth
 
-var creep_create = require('creep_create');
+var creep_create = require('creep_create2');
 module.exports = function () {
 
-
     army = Game.rooms.E23N14.find(FIND_HOSTILE_CREEPS);
+    e23n15_army = Game.rooms.E23N15.find(FIND_HOSTILE_CREEPS);
+    e23n13_army = Game.rooms.E23N13.find(FIND_HOSTILE_CREEPS);
 
-    creep_create(Game.spawns.Azeroth, {
+    army_length = army.length + e23n15_army.length + e23n13_army.length;
+
+    creep_create(Game.rooms.E23N14, {
         // extrecharger 可以保证 0 creep 启动
         // extrecharger make 0 creep start up
         extrecharger: {
@@ -15,7 +18,7 @@ module.exports = function () {
             condition: true
         },
         guard: {
-            max: army.length,
+            max: army_length,
             body: [
                 ATTACK,ATTACK,MOVE,
                 ATTACK,ATTACK,MOVE,
@@ -28,12 +31,12 @@ module.exports = function () {
                 ATTACK,ATTACK,MOVE,
                 ATTACK,ATTACK,MOVE
             ],
-            condition: army.length > 0
+            condition: army_length > 0
         },
         // e23n14 source 0 harvester
         harvester1: {
             max: 1,
-            body: [WORK, WORK, WORK, WORK, WORK, WORK, CARRY, MOVE, MOVE, MOVE], // OK
+            body: [WORK, WORK, WORK, WORK, WORK, MOVE, MOVE, MOVE], // OK
             condition: true
         },
         // pickup energy to source center or storage
@@ -45,7 +48,7 @@ module.exports = function () {
         // e23n14 source 1 harvester
         harvester2: {
             max: 1,
-            body: [WORK, WORK, WORK, WORK, WORK, WORK, CARRY, MOVE, MOVE, MOVE], // OK
+            body: [WORK, WORK, WORK, WORK, WORK, MOVE, MOVE, MOVE], // OK
             condition: true
         },
         // pickup energy to source center or storage
@@ -55,7 +58,7 @@ module.exports = function () {
             condition: true
         },
         homerecharger: {
-            max: 1,
+            max: 0,
             body: [CARRY, CARRY, MOVE], // OK
             condition: true
         },
@@ -77,96 +80,125 @@ module.exports = function () {
                 WORK, WORK, WORK, WORK, WORK,
                 WORK, WORK, WORK, WORK, WORK,
                 WORK, WORK, WORK, WORK, WORK,
-                WORK,
+                WORK, WORK, WORK,
                 CARRY, CARRY,
                 MOVE, MOVE, MOVE, MOVE, MOVE,
-                MOVE
+                MOVE, MOVE,
             ],
             condition: true
         },
         upgrade_recharger: {
             max: 1,
-            body: [CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE], // OK
-            condition: true
-        },
-        // build && repair wall
-        builder: {
-            max: 1,
-            body: [WORK, WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE], // OK
-            condition: true
-        },
-        // repair road
-        repairer: {
-            max: 2,
-            body: [WORK, CARRY, CARRY, CARRY, MOVE, MOVE], // OK
-            condition: true
-        },
-        // repair rampart
-        rampartbuilder: {
-            max: 2,
-            body: [WORK, WORK, CARRY, CARRY, MOVE, MOVE], // OK
+            body: [
+                CARRY, CARRY, CARRY, CARRY, CARRY,
+                CARRY, CARRY, CARRY, CARRY, CARRY,
+                MOVE, MOVE, MOVE, MOVE, MOVE
+            ], // OK
             condition: true
         },
 
+
         outside_harvester_1: {
             max: 1,
-            body: [WORK, WORK, WORK, WORK, WORK, WORK, CARRY, MOVE, MOVE, MOVE, MOVE],
-            condition: true
+            body: [WORK, WORK, WORK, WORK, WORK, MOVE, MOVE, MOVE],
+            condition: army_length == 0
         },
         outside_carryer_1: {
             max: 2,
             body: [
                 CARRY, CARRY, CARRY, CARRY, CARRY,
                 CARRY, CARRY, CARRY, CARRY, CARRY,
-                CARRY, CARRY, CARRY, CARRY,
+                CARRY, CARRY,
                 MOVE, MOVE, MOVE, MOVE, MOVE,
-                MOVE, MOVE
+                MOVE,
             ],
-            condition: true
+            condition: army_length == 0
         },
         outside_builder: {
-            max: 2,
+            max: 0,
             body: [WORK, WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE],
-            condition: true
+            condition: army_length == 0
+        },
+        outside_repairer: {
+            max: 1,
+            body: [WORK, WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE],
+            condition: army_length == 0
         },
 
 
         outside_harvester_2: {
             max: 1,
-            body: [WORK, WORK, WORK, WORK, WORK, WORK, CARRY, MOVE, MOVE, MOVE, MOVE],
-            condition: true
+            body: [WORK, WORK, WORK, WORK, WORK, MOVE, MOVE, MOVE],
+            condition: army_length == 0
         },
         outside_carryer_2: {
             max: 2,
             body: [
                 CARRY, CARRY, CARRY, CARRY, CARRY,
                 CARRY, CARRY, CARRY, CARRY, CARRY,
-                CARRY, CARRY,
+                CARRY, CARRY, CARRY, CARRY,
                 MOVE, MOVE, MOVE, MOVE, MOVE,
-                MOVE
+                MOVE, MOVE
             ],
-            condition: true
+            condition: army_length == 0
         },
         outside_builder_2: {
-            max: 2,
+            max: 0,
             body: [WORK, WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE],
-            condition: true
+            condition: army_length == 0
+        },
+
+        outside_repairer_2: {
+            max: 1,
+            body: [WORK, WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE],
+            condition: army_length == 0
         },
 
         outside_harvester_3: {
             max: 1,
-            body: [WORK, WORK, WORK, WORK, WORK, WORK, CARRY, MOVE, MOVE, MOVE, MOVE],
-            condition: true
+            body: [WORK, WORK, WORK, WORK, WORK, MOVE, MOVE, MOVE],
+            condition: army_length == 0
         },
         outside_carryer_3: {
             max: 2,
             body: [
                 CARRY, CARRY, CARRY, CARRY, CARRY,
                 CARRY, CARRY, CARRY, CARRY, CARRY,
-                CARRY, CARRY, CARRY, CARRY,
+                CARRY, CARRY, CARRY, CARRY, CARRY,
+                CARRY,
                 MOVE, MOVE, MOVE, MOVE, MOVE,
-                MOVE, MOVE
+                MOVE, MOVE, MOVE
             ],
+            condition: army_length == 0
+        },
+        // repair road
+        repairer: {
+            max: 1,
+            body: [
+                WORK, WORK, WORK,
+                CARRY, CARRY, CARRY, CARRY, CARRY,
+                MOVE, MOVE, MOVE, MOVE
+            ], // OK
+            condition: true
+        },
+        // repair rampart
+        rampartbuilder: {
+            max: 1,
+            body: [
+                WORK, WORK, WORK, WORK,
+                CARRY, CARRY, CARRY, CARRY,
+                MOVE, MOVE, MOVE, MOVE,
+            ], // OK
+            condition: true
+        },
+        // build && repair wall
+        builder: {
+            max: 2,
+            body: [
+                WORK, WORK, WORK, WORK, WORK,
+                CARRY, CARRY, CARRY, CARRY, CARRY,
+                MOVE, MOVE, MOVE, MOVE, MOVE
+            ], // OK
             condition: true
         }
     });

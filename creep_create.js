@@ -3,26 +3,7 @@
  * can before 100 ticks create new creep
  */
 module.exports = function (spawn, data) {
-    /*
-     data = {
-     harvester:{
-     max:20,
-     body:[WORK, CARRY, CARRY, MOVE, MOVE]
-     },
-     builder:{
-     max:2,
-     body:[WORK, CARRY, CARRY, MOVE, MOVE]
-     },
-     repairer:{
-     max:2,
-     body:[WORK, CARRY, CARRY, MOVE, MOVE]
-     },
-     upgrader:{
-     max:2,
-     body:[WORK, CARRY, CARRY, MOVE, MOVE]
-     }
-     };
-     */
+
     var groups = {};
     for(var name in Game.creeps) {
         var creep = Game.creeps[name];
@@ -55,7 +36,7 @@ module.exports = function (spawn, data) {
             if (spawn.canCreateCreep(data[roler].body, cname) == OK) {
                 result = spawn.createCreep(data[roler].body, cname,  { role: roler });
                 if ( result == cname) {
-                    console.log('create a creep:' + roler);
+                    console.log('create a creep:' + roler + " " + cname);
                 } else {
                     console.log(result);
                 }

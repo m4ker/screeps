@@ -87,11 +87,23 @@ module.exports =  function (creep, room) {
                 x: 11,
                 y: 49
             }
+        },
+        E25N13 : {
+            E25N12 : {
+                x:43,
+                y:49
+            }
+        },
+        E25N12 : {
+            E25N13 : {
+                x:44,
+                y:0
+            }
         }
     };
-    //console.log(creep.room.name);
-    //console.log(room.name);
-    if (data[creep.room.name][room.name] != undefined) {
+    //console.log(creep.room);
+    //console.log(room);
+    if (creep.room != undefined && room != undefined && data[creep.room.name][room.name] != undefined) {
         if (
             creep.pos.x!= data[creep.room.name][room.name].x || creep.pos.y != data[creep.room.name][room.name].y) {
             creep.moveTo(data[creep.room.name][room.name].x,data[creep.room.name][room.name].y);

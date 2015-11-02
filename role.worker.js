@@ -1,11 +1,12 @@
 /*
  * 工人
  * worker
- * todo: 代替 harvester
  */
+var debug = false;
 var move_to_room =  require('helper.move_to_room');
 module.exports = function (creep, room, works, energy) {
-    cpu_usage = Game.getUsedCpu();
+    if (debug)
+        cpu_usage = Game.getUsedCpu();
     /*
      energy: storage, energy, null
 
@@ -105,6 +106,12 @@ module.exports = function (creep, room, works, energy) {
                         creep.moveTo(creep.room.controller);
                     }
                     break;
+                } else if (works[i].action == 'harvest') {
+                    //creep.say(7);
+                    if (creep.harvest(works[i].target) == ERR_NOT_IN_RANGE) {
+                        creep.moveTo(works[i].target);
+                    }
+                    break;
                 }
             }
         } else {
@@ -112,12 +119,14 @@ module.exports = function (creep, room, works, energy) {
             //console.log(creep);
             //console.log(room);
             // go to room
-            console.log(room);
+            //console.log(room);
             move_to_room(creep, room);
             //creep.moveTo(new RoomPosition(20,20,room.name));
         }
     }
-    cpu_usage2 = Game.getUsedCpu() - cpu_usage;
-    if (cpu_usage2 > 1)
-        console.log(creep.memory.role + ' cpu used:' + cpu_usage2);
+    if(debug) {
+        cpu_usage2 = Game.getUsedCpu() - cpu_usage;
+        if (cpu_usage2 > 1)
+            console.log(creep.memory.role + ' cpu used:' + cpu_usage2);
+    }
 }

@@ -2,7 +2,7 @@
  * 主脚本
  * main scripts
  */
-
+debug = false;
 // 引入工种模块
 // role modules
 var harvester = require('role.harvester');
@@ -29,41 +29,49 @@ module.exports.loop = function () {
      * 这里会定义一系列变量，提供给工种
      * vars for roles
      */
-    var room     = Game.rooms.E23N14;
-    var spawn    = Game.spawns.Azeroth;
 
-    var mrampart = min_rampart(room); // hits 最小的 rampart
-    var mwall    = min_wall(room); // hits 最小的 wall
+    var e23n14_min_rampart = min_rampart(Game.rooms.E23N14); // hits 最小的 rampart
+    var e23n14_min_wall    = min_wall(Game.rooms.E23N14); // hits 最小的 wall
     var e24n13_min_rampart = min_rampart(Game.rooms.E24N13);
-    var e24n13_min_wall = min_wall(Game.rooms.E24N13);
+    var e24n13_min_wall    = min_wall(Game.rooms.E24N13);
+    var e25n13_min_rampart = min_rampart(Game.rooms.E25N13);
+    var e25n13_min_wall    = min_wall(Game.rooms.E25N13);
 
-    var st = Game.getObjectById('56237cff1d01d2c234a7abbf'); // storage 存储中心
+    var e23n14_st = Game.getObjectById('56237cff1d01d2c234a7abbf'); // storage 存储中心
     var e24n13_st = Game.getObjectById('562ba8f4ea27f37a20378e4c');
+    var e25n14_st = Game.getObjectById('56346b877d9a9c8029683649');
 
-    var ln = Game.getObjectById('562635244f83927a04db5a3c'); // link-1
+    var e23n14_ln_1 = Game.getObjectById('562635244f83927a04db5a3c'); // link-1
 
-    var up = null; // upgrader 升级工种
-    var E24N13_up = null;
-    var E25N13_up = null;
+    var e24n13_ln_1 = Game.getObjectById('56344b1165cfffa96f919ff8');
+
+    var e23n14_up = null; // upgrader 升级工种
+    var e24n13_up = null;
+    var e25n13_up = null;
     for ( i in Game.creeps ) {
-        if (Game.creeps[i].memory.role == 'upgrader')
-            up = Game.creeps[i];
-        if (Game.creeps[i].memory.role == 'draenor_upgrader')
-            E24N13_up = Game.creeps[i];
-        if (Game.creeps[i].memory.role == 'e25n13_upgrader')
-            E25N13_up = Game.creeps[i];
+        if (Game.creeps[i].memory.role == 'upgrader' && Game.creeps[i].ticksToLive != undefined)
+            e23n14_up = Game.creeps[i];
+        if (Game.creeps[i].memory.role == 'draenor_upgrader' && Game.creeps[i].ticksToLive != undefined)
+            e24n13_up = Game.creeps[i];
+        if (Game.creeps[i].memory.role == 'e25n13_upgrader' && Game.creeps[i].ticksToLive != undefined)
+            e25n13_up = Game.creeps[i];
     }
 
-    var sources = room.find(FIND_SOURCES); // sources for harvester 资源
-    var E24N13_sources = Game.rooms.E24N13.find(FIND_SOURCES);
+    var e23n14_sources = Game.rooms.E23N14.find(FIND_SOURCES); // sources for harvester 资源
+    var e24n13_sources = Game.rooms.E24N13.find(FIND_SOURCES);
 
     // construction sites
-    var cs = room.find(FIND_CONSTRUCTION_SITES);
+    var e23n14_cs = Game.rooms.E23N14.find(FIND_CONSTRUCTION_SITES);
     var e25n13_cs = Game.rooms.E25N13.find(FIND_CONSTRUCTION_SITES);
 
 
-    if (up && up.carry.energy < 20)
-        ln.transferEnergy(up);
+    if (e23n14_up && e23n14_up.carry.energy < 40) {
+        e23n14_ln_1.transferEnergy(e23n14_up);
+    }
+
+    if (e24n13_up && e24n13_up.carry.energy < 40) {
+        e24n13_ln_1.transferEnergy(e24n13_up);
+    }
 
     // role controller
     for(var name in Game.creeps) {
@@ -71,26 +79,90 @@ module.exports.loop = function () {
         //creep.moveTo(10, 10);
         //continue;
         switch(creep.memory.role) {
+            /*
+             case 'test':
+             creep.say('go');
+             if(creep.room.name == 'E25N13') {
+             creep.moveTo(12,0);
+             }
+             break;
+             */
+            case 'scout':
+                console.log('i am scout');
+                if(creep.room.name == 'E24N13') {
+                    creep.moveTo(26,0);
+                } else {
+                    var myDate = new Date();
+
+                    key = myDate.getHours() + ":" + myDate.getMinutes();     //获取当前分钟数(0-59)
+
+                    target = creep.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
+                    if (target) {
+                        Memory.rooms.E24N14[key] = 1;
+                    } else {
+                        Memory.rooms.E24N14[key] = 0;
+                    }
+                    creep.moveTo(26,48);
+                }
+                break;
+            case 'e25n14_builder':
+
+                if(creep.room.name == 'E25N13') {
+                    //creep.say('bb');
+                    if (creep.carry.energy < creep.carryCapacity) {
+                        if(Game.rooms.E25N13.storage.transferEnergy(creep) == ERR_NOT_IN_RANGE){
+                            creep.moveTo(Game.rooms.E25N13.storage);
+                        }
+                    } else {
+                        creep.moveTo(12,0);
+                    }
+                } else if(creep.room.name == 'E25N14') {
+                    //creep.say('bc');
+                    if (creep.carry.energy == 0) {
+                        creep.moveTo(12,49);
+                    } else {
+                        e25n14_cs = creep.pos.findClosestByRange(FIND_CONSTRUCTION_SITES);
+                        if (e25n14_cs) {
+                            if (creep.build(e25n14_cs) == ERR_NOT_IN_RANGE) {
+                                creep.moveTo(e25n14_cs);
+                            }
+                        } else {
+
+                            var road = creep.pos.findClosestByRange(FIND_STRUCTURES, {
+                                filter: function(object){
+                                    return object.structureType == STRUCTURE_ROAD && object.hits < object.hitsMax;
+                                }
+                            });
+                            if (road) {
+                                if (creep.repair(road) == ERR_NOT_IN_RANGE) {
+                                    creep.moveTo(road);
+                                }
+                            }
+
+                        }
+                    }
+                }
+                break;
             case 'extrecharger':
-                transfer2(creep, st, STRUCTURE_EXTENSION);
+                transfer2(creep, e23n14_st, STRUCTURE_EXTENSION);
                 break;
             case 'harvester1':
-                harvester2(creep, sources[0]);
+                harvester2(creep, e23n14_sources[0]);
                 break;
             case 'harvester2':
-                harvester2(creep, sources[1]);
+                harvester2(creep, e23n14_sources[1]);
                 break;
             case 'upgrader':
-                worker(creep, room, [{action:'upgrade'}], null);
+                worker(creep, Game.rooms.E23N14, [{action:'upgrade'}], null);
                 break;
             case 'upgrade_recharger':
-                transfer2(creep, st, ln);
+                transfer2(creep, e23n14_st, e23n14_ln_1);
                 break;
             case 'pickuper':
-                transfer2(creep, sources[0].pos, st);
+                transfer2(creep, e23n14_sources[0].pos, e23n14_st);
                 break;
             case 'pickuper2':
-                transfer2(creep, sources[1].pos, st);
+                transfer2(creep, e23n14_sources[1].pos, e23n14_st);
                 break;
             case 'repairer':
                 var road = creep.pos.findClosestByRange(FIND_STRUCTURES, {
@@ -99,21 +171,21 @@ module.exports.loop = function () {
                     }
                 });
                 if (road) {
-                    worker(creep, room, [{action:'repair', target:road}], st);
+                    worker(creep, Game.rooms.E23N14, [{action:'repair', target:road}], Game.rooms.E23N14); // 捡能量需要观察
                 }
                 break;
             case 'builder':
-                if (cs[0] != undefined) {
-                    worker(creep, room, [{action:'build', target:cs[0]}], st);
+                if (e23n14_cs[0] != undefined) {
+                    worker(creep, Game.rooms.E23N14, [{action:'build', target:e23n14_cs[0]}], e23n14_st);
                 } else {
                     var wall = creep.pos.findClosestByRange(FIND_STRUCTURES, {
                         filter: function(object){
                             return object.structureType == STRUCTURE_WALL
-                                && (object.hits < (mwall.hits+creep.carryCapacity * 100));
+                                && (object.hits < (e23n14_min_wall.hits+creep.carryCapacity * 100));
                             //&& object.hits > 1;// 排除hello world
                         }
                     });
-                    worker(creep, room, [{action:'repair', target:wall}], st);
+                    worker(creep, Game.rooms.E23N14, [{action:'repair', target:wall}], e23n14_st);
                 }
                 break;
             case 'guard':
@@ -131,29 +203,24 @@ module.exports.loop = function () {
                 //soldier(creep);
                 break;
             case 'a2':
-                creep.say(1);
+                //creep.say(1);
                 //creep.suicide();
                 //creep.move(BOTTOM);
                 //creep.moveTo(Game.flags.a9.pos);
                 //creep.moveTo(Game.flags.a9);
                 //soldier(creep, Game.flags.a9);
-
                 spp = Game.getObjectById('562aeb3679a223a66ed911f5');
                 if (creep.attack(spp) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(spp);
                 }
-
                 //soldier(creep);
                 break;
             case 'a3':
                 //soldier(creep, Game.flags.a3);
-
                 spp = Game.getObjectById('5631f6f57748c61c3726e453');
                 if (creep.attack(spp) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(spp);
                 }
-
-
                 //soldier(creep);
                 break;
             case 'attacker2':
@@ -165,46 +232,49 @@ module.exports.loop = function () {
             case 'rampartbuilder':
                 var rampart = creep.pos.findClosestByRange(FIND_STRUCTURES, {
                     filter: function(object){
-                        return object.structureType == STRUCTURE_RAMPART && (object.hits <= (mrampart.hits + 10000));
+                        return object.structureType == STRUCTURE_RAMPART && (object.hits <= (e23n14_min_rampart.hits + 10000));
                     }
                 });
-                worker(creep, room, [{action:'repair', target:rampart}], st);
+                worker(creep, Game.rooms.E23N14, [{action:'repair', target:rampart}], e23n14_st);
                 break;
             case 'homerecharger':
-                transfer2(creep, st, spawn);
+                transfer2(creep, e23n14_st, STRUCTURE_SPAWN);
                 break;
             case 'outside_builder_2':
-                creep.say('ob2');
-                //creep.moveTo(20,20);
-                //continue;
+            case 'outside_repairer_2':
                 // 修和建的逻辑需要调整
-                var road = Game.rooms.E23N15.find(FIND_STRUCTURES, {
-                    filter: function(object){
-                        return object.structureType == STRUCTURE_ROAD && object.hits < object.hitsMax;
+                if (creep.room.name == 'E23N15') {
+                    road = creep.pos.findClosestByRange(FIND_STRUCTURES, {
+                        filter: function(object){
+                            return object.structureType == STRUCTURE_ROAD && object.hits < object.hitsMax;
+                        }
+                    });
+                    if (road) {
+                        worker(creep, Game.rooms.E23N15, [{action:'repair', target:road}], Game.rooms.E23N15);
+                    } else {
+                        var ocs = Game.rooms.E23N15.find(FIND_CONSTRUCTION_SITES);
+                        worker(creep, Game.rooms.E23N15, [{action:'build', target:ocs[0]}], Game.rooms.E23N15);
                     }
-                });
-                if (road[0] instanceof Structure) {
-                    //if (Game.rooms.E23N15 != undefined)
-                    worker(creep, Game.rooms.E23N15, [{action:'repair', target:road[0]}], Game.rooms.E23N15);
                 } else {
-
-                    var ocs = Game.rooms.E23N15.find(FIND_CONSTRUCTION_SITES);
-                    worker(creep, Game.rooms.E23N15, [{action:'build', target:ocs[0]}], Game.rooms.E23N15);
+                    move_to_room(creep, Game.rooms.E23N15)
                 }
                 break;
             case 'outside_builder':
-                creep.say('ob');
-                var road = Game.rooms.E23N13.find(FIND_STRUCTURES, {
-                    filter: function(object){
-                        return object.structureType == STRUCTURE_ROAD && object.hits < object.hitsMax;
+            case 'outside_repairer':
+                if (creep.room.name == 'E23N13') {
+                    road = creep.pos.findClosestByRange(FIND_STRUCTURES, {
+                        filter: function(object){
+                            return object.structureType == STRUCTURE_ROAD && object.hits < object.hitsMax;
+                        }
+                    });
+                    if (road) {
+                        worker(creep, Game.rooms.E23N13, [{action:'repair', target:road}], Game.rooms.E23N13);
+                    } else {
+                        var ocs = Game.rooms.E23N13.find(FIND_CONSTRUCTION_SITES);
+                        worker(creep, Game.rooms.E23N13, [{action:'build', target:ocs[0]}], Game.rooms.E23N13);
                     }
-                });
-                if (road[0] instanceof Structure) {
-                    worker(creep, Game.rooms.E23N13, [{action:'repair', target:road[0]}], Game.rooms.E23N13);
                 } else {
-
-                    var ocs = Game.rooms.E23N13.find(FIND_CONSTRUCTION_SITES);
-                    worker(creep, Game.rooms.E23N13, [{action:'build', target:ocs[0]}], Game.rooms.E23N13);
+                    move_to_room(creep, Game.rooms.E23N13)
                 }
                 break;
             case 'outside_harvester_1':
@@ -217,13 +287,13 @@ module.exports.loop = function () {
                 harvester(creep, 'E23N15', 0);
                 break;
             case 'outside_carryer_1':
-                transfer2(creep, Game.rooms.E23N13, st);
+                transfer2(creep, Game.rooms.E23N13, e23n14_st);
                 break;
             case 'outside_carryer_2':
-                transfer2(creep, Game.getObjectById('55db3423efa8e3fe66e05c0b').pos, st);
+                transfer2(creep, Game.getObjectById('55db3423efa8e3fe66e05c0b').pos, e23n14_st);
                 break;
             case 'outside_carryer_3':
-                transfer2(creep, Game.getObjectById('55db3423efa8e3fe66e05c0a').pos, st);
+                transfer2(creep, Game.getObjectById('55db3423efa8e3fe66e05c0a').pos, e23n14_st);
                 break;
             case 'draenor_harvester_1':
                 if (creep.room.name == 'E23N14') {
@@ -268,19 +338,19 @@ module.exports.loop = function () {
                 transfer2(creep, e24n13_st, STRUCTURE_EXTENSION);
                 break;
             case 'draenor_pickuper1':
-                transfer2(creep, E24N13_sources[1].pos, e24n13_st);
+                transfer2(creep, e24n13_sources[1].pos, e24n13_st);
                 break;
             case 'draenor_pickuper2':
-                transfer2(creep, E24N13_sources[0].pos, e24n13_st);
+                transfer2(creep, e24n13_sources[0].pos, e24n13_st);
                 break;
             case 'draenor_recharger':
-                transfer2(creep, e24n13_st, Game.spawns.Draenor);
+                transfer2(creep, e24n13_st, STRUCTURE_SPAWN);
                 break;
             case 'draenor_upgrader':
                 worker(creep, Game.rooms.E24N13, [{action:'upgrade'}],  Game.spawns.Draenor);
                 break;
             case 'draenor_upgrader_recharger':
-                transfer2(creep, e24n13_st, E24N13_up);
+                transfer2(creep, e24n13_st, e24n13_ln_1);
                 break;
             case 'draenor_reparier':
                 var road = creep.pos.findClosestByRange(FIND_STRUCTURES, {
@@ -289,7 +359,7 @@ module.exports.loop = function () {
                     }
                 });
                 if (road) {
-                    worker(creep, Game.rooms.E24N13, [{action:'repair', target:road}], e24n13_st);
+                    worker(creep, Game.rooms.E24N13, [{action:'repair', target:road}], Game.rooms.E24N13); // 捡资源需要观察
                 }
                 break;
             case 'e24n13_rampartbuilder':
@@ -298,7 +368,6 @@ module.exports.loop = function () {
                         return object.structureType == STRUCTURE_RAMPART && (object.hits <= (e24n13_min_rampart.hits + 10000));
                     }
                 });
-                //console.log(rampart);
                 if (rampart)
                     worker(creep, Game.rooms.E24N13, [{action:'repair', target:rampart}], e24n13_st);
                 break;
@@ -315,17 +384,22 @@ module.exports.loop = function () {
                 transfer2(creep, Game.getObjectById('55db3448efa8e3fe66e05cfb').pos, e24n13_st);
                 break;
             case 'e24n12_builder':
-                var road = Game.rooms.E24N12.find(FIND_STRUCTURES, {
-                    filter: function(object){
-                        return object.structureType == STRUCTURE_ROAD && object.hits < object.hitsMax;
+                if (creep.room.name == 'E24N12') {
+                    road = creep.pos.findClosestByRange(FIND_STRUCTURES, {
+                        filter: function(object){
+                            return object.structureType == STRUCTURE_ROAD && object.hits < object.hitsMax;
+                        }
+                    });
+                    if (road) {
+                        worker(creep, Game.rooms.E24N12, [{action:'repair', target:road}], Game.rooms.E24N12);
+                    } else {
+                        var ocs = Game.rooms.E24N12.find(FIND_CONSTRUCTION_SITES);
+                        worker(creep, Game.rooms.E24N12, [{action:'build', target:ocs[0]}], Game.rooms.E24N12);
                     }
-                });
-                if (road[0] instanceof Structure) {
-                    worker(creep, Game.rooms.E24N12, [{action:'repair', target:road[0]}], Game.rooms.E24N12);
                 } else {
-                    var ocs = Game.rooms.E24N12.find(FIND_CONSTRUCTION_SITES);
-                    worker(creep, Game.rooms.E24N12, [{action:'build', target:ocs[0]}], Game.rooms.E24N12);
+                    move_to_room(creep, Game.rooms.E24N12)
                 }
+
                 break;
             case 'spawn_harvester':
                 if (creep.room.name == 'E24N13') {
@@ -360,12 +434,12 @@ module.exports.loop = function () {
                     if (Game.spawns.Dream != undefined) {
                         worker(creep, Game.rooms.E25N13, [{action:'upgrade'}], Game.rooms.E23N13);
                     } else {
-                        worker(creep, Game.rooms.E25N13, [{action:'build', target:Game.getObjectById('55db3469efa8e3fe66e05e1d')}], Game.rooms.E23N13);
+                        worker(creep, Game.rooms.E25N13, [{action:'build', target:Game.getObjectById('55db3469efa8e3fe66e05e1d')}], Game.rooms.E25N13.storage);
                     }
                 }
                 break;
             case 'e25n13_extrecharger':
-                transfer2(creep, new RoomPosition(22,22,'E25N13'), STRUCTURE_EXTENSION);
+                transfer2(creep, Game.rooms.E25N13.storage, STRUCTURE_EXTENSION);
                 break;
             case 'e25n13_harvester_1':
                 harvester2(creep, Game.getObjectById('55db3469efa8e3fe66e05e1d'));
@@ -374,39 +448,44 @@ module.exports.loop = function () {
                 harvester2(creep, Game.getObjectById('55db3469efa8e3fe66e05e1c'));
                 break;
             case 'e25n13_pickuper1':
-                creep.say('ep1');
-                transfer2(creep, Game.getObjectById('55db3469efa8e3fe66e05e1d').pos, new RoomPosition(22,22,'E25N13'));
+                //creep.say('ep1');
+                transfer2(creep, Game.getObjectById('55db3469efa8e3fe66e05e1d').pos, Game.rooms.E25N13.storage);
                 break;
             case 'e25n13_recharger':
-                transfer2(creep, new RoomPosition(22,22,'E25N13'), Game.spawns.Dream);
+                //creep.say('er');
+                transfer2(creep, Game.rooms.E25N13.storage, STRUCTURE_SPAWN);
                 break;
             case 'e25n13_pickuper2':
-                creep.say('ep2');
-                transfer2(creep, Game.getObjectById('55db3469efa8e3fe66e05e1c').pos, new RoomPosition(22,22,'E25N13'));
+                transfer2(creep, Game.getObjectById('55db3469efa8e3fe66e05e1c').pos, Game.rooms.E25N13.storage);
                 break;
             case 'e25n13_upgrader':
-                creep.say('up');
+                //creep.say('eup');
                 worker(creep, Game.rooms.E25N13, [{action:'upgrade'}],  null);
                 break;
             case 'e25n13_upgrader_recharger':
-                //creep.say('upr');
-                transfer2(creep, new RoomPosition(22,22,'E25N13'), E25N13_up);
+                transfer2(creep, Game.rooms.E25N13.storage, e25n13_up);
                 break;
             case 'e25n13_builder':
                 if (e25n13_cs[0] != undefined) {
-                    worker(creep, Game.rooms.E25N13, [{action:'build', target:e25n13_cs[0]}], new RoomPosition(22,22,'E25N13'));
+                    worker(creep, Game.rooms.E25N13, [{action:'build', target:e25n13_cs[0]}], Game.rooms.E25N13.storage);
                 } else {
-                    /*
-                     var wall = creep.pos.findClosestByRange(FIND_STRUCTURES, {
-                     filter: function(object){
-                     return object.structureType == STRUCTURE_WALL
-                     && (object.hits < (e25n13_min_wall.hits+creep.carryCapacity * 100));
-                     }
-                     });
-                     worker(creep, Game.rooms.E25N13, [{action:'repair', target:wall}], new RoomPosition(22,22,'E25N13'));
-                     */
+                    var wall = creep.pos.findClosestByRange(FIND_STRUCTURES, {
+                        filter: function(object){
+                            return object.structureType == STRUCTURE_WALL
+                                && (object.hits < (e25n13_min_wall.hits+creep.carryCapacity * 100));
+                        }
+                    });
+                    worker(creep, Game.rooms.E25N13, [{action:'repair', target:wall}], Game.rooms.E25N13.storage);
                 }
-
+                break;
+            case 'e25n13_rampartbuilder':
+                var rampart = creep.pos.findClosestByRange(FIND_STRUCTURES, {
+                    filter: function(object){
+                        return object.structureType == STRUCTURE_RAMPART && (object.hits <= (e25n13_min_rampart.hits + 10000));
+                    }
+                });
+                if (rampart)
+                    worker(creep, Game.rooms.E25N13, [{action:'repair', target:rampart}], Game.rooms.E25N13.storage);
                 break;
             case 'e25n13_reparier':
                 var road = creep.pos.findClosestByRange(FIND_STRUCTURES, {
@@ -415,10 +494,74 @@ module.exports.loop = function () {
                     }
                 });
                 if (road) {
-                    worker(creep, Game.rooms.E25N13, [{action:'repair', target:road}], new RoomPosition(22,22,'E25N13'));
+                    worker(creep, Game.rooms.E25N13, [{action:'repair', target:road}], Game.rooms.E25N13.storage);
                 }
                 break;
+            case 'e25n12_builder':
+                if (creep.room.name == 'E25N13') {
+                    creep.moveTo(43,49);
+                } else {
+                    if (creep.carry.energy == 0) {
+                        var EN = creep.pos.findClosestByRange(FIND_DROPPED_ENERGY);
+                        if (EN) {
+                            if (creep.pickup(EN) == ERR_NOT_IN_RANGE) {
+                                creep.moveTo(EN);
+                            }
+                        }
+                    } else {
+                        e25n12_cs = creep.pos.findClosestByRange(FIND_CONSTRUCTION_SITES);
+                        if (e25n12_cs) {
+                            if (creep.build(e25n12_cs) == ERR_NOT_IN_RANGE) {
+                                creep.moveTo(e25n12_cs);
+                            }
+                        } else {
+                            var road = creep.pos.findClosestByRange(FIND_STRUCTURES, {
+                                filter: function(object){
+                                    return object.structureType == STRUCTURE_ROAD && object.hits < object.hitsMax;
+                                }
+                            });
+                            if (road) {
+                                if (creep.repair(road) == ERR_NOT_IN_RANGE) {
+                                    creep.moveTo(road);
+                                }
+                            }
 
+                        }
+                    }
+                }
+                break;
+            case 'e25n12_harvester':
+                if (creep.room.name == 'E25N13') {
+                    creep.moveTo(43,49);
+                } else {
+                    e25n12_source = creep.pos.findClosestByRange(FIND_SOURCES);
+                    if (creep.harvest(e25n12_source) == ERR_NOT_IN_RANGE) {
+                        creep.moveTo(e25n12_source);
+                    }
+                }
+                break;
+            case 'e25n12_carryer':
+                if (creep.room.name == 'E25N13') {
+                    if (creep.carry.energy == 0) {
+                        creep.moveTo(43,49);
+                    } else {
+                        if (creep.transferEnergy(Game.rooms.E25N13.storage) == ERR_NOT_IN_RANGE) {
+                            creep.moveTo(Game.rooms.E25N13.storage);
+                        }
+                    }
+                } else {
+                    if (creep.carry.energy < creep.carryCapacity) {
+                        var EN = creep.pos.findClosestByRange(FIND_DROPPED_ENERGY);
+                        if (EN) {
+                            if (creep.pickup(EN) == ERR_NOT_IN_RANGE) {
+                                creep.moveTo(EN);
+                            }
+                        }
+                    } else {
+                        creep.moveTo(44,0);
+                    }
+                }
+                break;
             default:
                 console.log(creep.name + creep.memory.role + ' fucker');
                 break;
@@ -441,5 +584,6 @@ module.exports.loop = function () {
             //delete Memory.creeps[i];
         }
     }
-    console.log(Game.getUsedCpu());
+    if (debug)
+        console.log(Game.getUsedCpu());
 }
