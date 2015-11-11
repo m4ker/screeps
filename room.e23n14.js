@@ -4,17 +4,26 @@ var creep_create = require('creep_create2');
 module.exports = function () {
 
     army = Game.rooms.E23N14.find(FIND_HOSTILE_CREEPS);
-    e23n15_army = Game.rooms.E23N15.find(FIND_HOSTILE_CREEPS);
-    e23n13_army = Game.rooms.E23N13.find(FIND_HOSTILE_CREEPS);
+    //e23n15_army = Game.rooms.E23N15.find(FIND_HOSTILE_CREEPS);
+    //e23n13_army = Game.rooms.E23N13.find(FIND_HOSTILE_CREEPS);
 
-    army_length = army.length + e23n15_army.length + e23n13_army.length;
+    army_length = army.length;// + e23n15_army.length + e23n13_army.length;
 
     creep_create(Game.rooms.E23N14, {
         // extrecharger 可以保证 0 creep 启动
         // extrecharger make 0 creep start up
-        extrecharger: {
-            max: 3,
+        e23n14_ext_1: {
+            max: 1,
             body: [CARRY, CARRY, CARRY, CARRY, MOVE, MOVE], // OK
+            condition: true
+        },
+        e23n14_ext_2: {
+            max: 1,
+            body: [
+                CARRY, CARRY, CARRY, CARRY, CARRY,
+                CARRY, CARRY, CARRY, CARRY, CARRY,
+                MOVE, MOVE, MOVE, MOVE, MOVE
+            ], // OK
             condition: true
         },
         guard: {
@@ -33,33 +42,31 @@ module.exports = function () {
             ],
             condition: army_length > 0
         },
-        // e23n14 source 0 harvester
-        harvester1: {
+        e23n14_harvester_1: {
             max: 1,
-            body: [WORK, WORK, WORK, WORK, WORK, MOVE, MOVE, MOVE], // OK
+            body: [
+                WORK,WORK,WORK,WORK,WORK,
+                WORK,WORK,WORK,WORK,WORK,
+                CARRY,CARRY,CARRY,CARRY,CARRY,
+                CARRY,CARRY,CARRY,CARRY,CARRY,
+                MOVE,MOVE,MOVE,MOVE,MOVE,
+                MOVE,MOVE,MOVE,MOVE,MOVE,
+            ],
             condition: true
         },
-        // pickup energy to source center or storage
-        pickuper: {
+        e23n14_harvester_2: {
             max: 1,
-            body: [CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE], // OK
-            condition: true
-        },
-        // e23n14 source 1 harvester
-        harvester2: {
-            max: 1,
-            body: [WORK, WORK, WORK, WORK, WORK, MOVE, MOVE, MOVE], // OK
-            condition: true
-        },
-        // pickup energy to source center or storage
-        pickuper2: {
-            max: 1,
-            body: [CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE], // OK
-            condition: true
-        },
-        homerecharger: {
-            max: 0,
-            body: [CARRY, CARRY, MOVE], // OK
+            body: [
+                WORK,WORK,WORK,WORK,WORK,
+                WORK,WORK,WORK,WORK,WORK,
+                WORK,WORK,
+                CARRY,CARRY,CARRY,CARRY,CARRY,
+                CARRY,CARRY,CARRY,CARRY,CARRY,
+                CARRY,CARRY,
+                MOVE,MOVE,MOVE,MOVE,MOVE,
+                MOVE,MOVE,MOVE,MOVE,MOVE,
+                MOVE,MOVE,
+            ],
             condition: true
         },
         attacker: {
@@ -74,131 +81,124 @@ module.exports = function () {
             condition: true
         },
         // controller upgrader
-        upgrader: {
+        e23n14_upgrader: {
             max: 1,
             body: [
                 WORK, WORK, WORK, WORK, WORK,
                 WORK, WORK, WORK, WORK, WORK,
                 WORK, WORK, WORK, WORK, WORK,
-                WORK, WORK, WORK,
                 CARRY, CARRY,
                 MOVE, MOVE, MOVE, MOVE, MOVE,
-                MOVE, MOVE,
+                MOVE, MOVE, MOVE, MOVE,
             ],
             condition: true
         },
-        upgrade_recharger: {
+        e23n14_upgrade_recharger: {
             max: 1,
             body: [
                 CARRY, CARRY, CARRY, CARRY, CARRY,
                 CARRY, CARRY, CARRY, CARRY, CARRY,
-                MOVE, MOVE, MOVE, MOVE, MOVE
+                MOVE, MOVE, MOVE, MOVE, MOVE,
             ], // OK
             condition: true
         },
 
-
-        outside_harvester_1: {
+        e23n13_harvester_1: {
             max: 1,
             body: [WORK, WORK, WORK, WORK, WORK, MOVE, MOVE, MOVE],
             condition: army_length == 0
         },
-        outside_carryer_1: {
-            max: 2,
+        e23n13_carryer_1: {
+            max: 1,
             body: [
                 CARRY, CARRY, CARRY, CARRY, CARRY,
                 CARRY, CARRY, CARRY, CARRY, CARRY,
-                CARRY, CARRY,
+                CARRY, CARRY, CARRY, CARRY, CARRY,
+                CARRY, CARRY, CARRY, CARRY, CARRY,
+                CARRY, CARRY, CARRY, CARRY, CARRY,
                 MOVE, MOVE, MOVE, MOVE, MOVE,
-                MOVE,
-            ],
-            condition: army_length == 0
-        },
-        outside_builder: {
-            max: 0,
-            body: [WORK, WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE],
-            condition: army_length == 0
-        },
-        outside_repairer: {
-            max: 1,
-            body: [WORK, WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE],
-            condition: army_length == 0
-        },
-
-
-        outside_harvester_2: {
-            max: 1,
-            body: [WORK, WORK, WORK, WORK, WORK, MOVE, MOVE, MOVE],
-            condition: army_length == 0
-        },
-        outside_carryer_2: {
-            max: 2,
-            body: [
-                CARRY, CARRY, CARRY, CARRY, CARRY,
-                CARRY, CARRY, CARRY, CARRY, CARRY,
-                CARRY, CARRY, CARRY, CARRY,
-                MOVE, MOVE, MOVE, MOVE, MOVE,
-                MOVE, MOVE
-            ],
-            condition: army_length == 0
-        },
-        outside_builder_2: {
-            max: 0,
-            body: [WORK, WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE],
-            condition: army_length == 0
-        },
-
-        outside_repairer_2: {
-            max: 1,
-            body: [WORK, WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE],
-            condition: army_length == 0
-        },
-
-        outside_harvester_3: {
-            max: 1,
-            body: [WORK, WORK, WORK, WORK, WORK, MOVE, MOVE, MOVE],
-            condition: army_length == 0
-        },
-        outside_carryer_3: {
-            max: 2,
-            body: [
-                CARRY, CARRY, CARRY, CARRY, CARRY,
-                CARRY, CARRY, CARRY, CARRY, CARRY,
-                CARRY, CARRY, CARRY, CARRY, CARRY,
-                CARRY,
                 MOVE, MOVE, MOVE, MOVE, MOVE,
                 MOVE, MOVE, MOVE
             ],
             condition: army_length == 0
         },
-        // repair road
-        repairer: {
+        e23n13_repairer: {
             max: 1,
             body: [
-                WORK, WORK, WORK,
-                CARRY, CARRY, CARRY, CARRY, CARRY,
+                WORK, WORK,
+                CARRY, CARRY, CARRY, CARRY, CARRY, CARRY,
                 MOVE, MOVE, MOVE, MOVE
-            ], // OK
-            condition: true
+            ],
+            condition: army_length == 0
         },
-        // repair rampart
-        rampartbuilder: {
+        e23n15_harvester_1: {
+            max: 1,
+            body: [WORK, WORK, WORK, WORK, WORK, MOVE, MOVE, MOVE],
+            condition: army_length == 0
+        },
+        e23n15_carryer_1: {
             max: 1,
             body: [
-                WORK, WORK, WORK, WORK,
+                CARRY, CARRY, CARRY, CARRY, CARRY,
+                CARRY, CARRY, CARRY, CARRY, CARRY,
+                CARRY, CARRY, CARRY, CARRY, CARRY,
+                CARRY, CARRY, CARRY, CARRY, CARRY,
+                CARRY, CARRY, CARRY, CARRY, CARRY,
+                CARRY, CARRY, CARRY, CARRY, CARRY,
+                MOVE, MOVE, MOVE, MOVE, MOVE,
+                MOVE, MOVE, MOVE, MOVE, MOVE,
+                MOVE, MOVE, MOVE, MOVE, MOVE
+            ],
+            condition: army_length == 0
+        },
+        e23n15_repairer: {
+            max: 1,
+            body: [WORK, WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE],
+            condition: army_length == 0
+        },
+        e23n15_harvester_2: {
+            max: 1,
+            body: [WORK, WORK, WORK, WORK, WORK, MOVE, MOVE, MOVE],
+            condition: army_length == 0
+        },
+        e23n15_carryer_2: {
+            max: 1,
+            body: [
+                CARRY, CARRY, CARRY, CARRY, CARRY,
+                CARRY, CARRY, CARRY, CARRY, CARRY,
+                CARRY, CARRY, CARRY, CARRY, CARRY,
+                CARRY, CARRY, CARRY, CARRY, CARRY,
+                CARRY, CARRY, CARRY, CARRY, CARRY,
+                CARRY, CARRY, CARRY, CARRY, CARRY,
+                MOVE, MOVE, MOVE, MOVE, MOVE,
+                MOVE, MOVE, MOVE, MOVE, MOVE,
+                MOVE, MOVE, MOVE, MOVE, MOVE
+            ],
+            condition: army_length == 0
+        },
+        e23n14_repairer: {
+            max: 1,
+            body: [
+                WORK, WORK,
                 CARRY, CARRY, CARRY, CARRY,
-                MOVE, MOVE, MOVE, MOVE,
-            ], // OK
+                MOVE, MOVE, MOVE
+            ],
             condition: true
         },
-        // build && repair wall
-        builder: {
-            max: 2,
+        // repair road && build && repair wall
+        e23n14_builder: {
+            max: 1,
             body: [
                 WORK, WORK, WORK, WORK, WORK,
+                WORK, WORK, WORK, WORK, WORK,
+                WORK, WORK, WORK, WORK, WORK,
                 CARRY, CARRY, CARRY, CARRY, CARRY,
-                MOVE, MOVE, MOVE, MOVE, MOVE
-            ], // OK
+                CARRY, CARRY, CARRY, CARRY, CARRY,
+                CARRY, CARRY, CARRY, CARRY, CARRY,
+                MOVE, MOVE, MOVE, MOVE, MOVE,
+                MOVE, MOVE, MOVE, MOVE, MOVE,
+                MOVE, MOVE, MOVE, MOVE, MOVE,
+            ],
             condition: true
         }
     });

@@ -7,9 +7,18 @@ module.exports = function () {
     army = Game.rooms.E25N13.find(FIND_HOSTILE_CREEPS);
 
     creep_create(Game.rooms.E25N13, {
-        e25n13_extrecharger: {
+        e25n13_ext_1: {
             max: 1,
-            body: [CARRY, CARRY, MOVE], // OK
+            body: [CARRY, CARRY, CARRY, CARRY, MOVE, MOVE], // OK
+            condition: true
+        },
+        e25n13_ext_2: {
+            max: 0,
+            body: [
+                CARRY, CARRY, CARRY, CARRY, CARRY,
+                CARRY, CARRY, CARRY, CARRY, CARRY,
+                MOVE, MOVE, MOVE, MOVE, MOVE
+            ],
             condition: true
         },
         guard: {
@@ -20,8 +29,8 @@ module.exports = function () {
                 //ATTACK,ATTACK,MOVE,
                 //ATTACK,ATTACK,MOVE,
                 //ATTACK,ATTACK,MOVE,
-                //ATTACK,ATTACK,MOVE,
-                //ATTACK,ATTACK,MOVE,
+                ATTACK,ATTACK,MOVE,
+                ATTACK,ATTACK,MOVE,
                 ATTACK,ATTACK,MOVE,
                 ATTACK,ATTACK,MOVE,
                 ATTACK,ATTACK,MOVE
@@ -30,50 +39,67 @@ module.exports = function () {
         },
         e25n13_harvester_1: {
             max: 1,
-            body: [WORK, WORK, WORK, WORK, WORK, MOVE, MOVE, MOVE],
+            body: [
+                // 12,12,12
+                WORK, WORK, WORK, WORK, WORK,
+                WORK, WORK, WORK, WORK, WORK,
+                CARRY, CARRY, CARRY, CARRY, CARRY,
+                CARRY, CARRY, CARRY, CARRY, CARRY,
+                MOVE, MOVE, MOVE, MOVE, MOVE,
+                MOVE, MOVE, MOVE, MOVE, MOVE,
+            ],
             condition: true
         },
         e25n13_harvester_2: {
             max: 1,
-            body: [WORK, WORK, WORK, WORK, WORK, MOVE, MOVE, MOVE],
-            condition: true
-        },
-        // pickup energy to source center or storage
-        e25n13_pickuper1: {
-            max: 2,
-            body: [CARRY, CARRY, CARRY, CARRY, MOVE, MOVE], // OK
+            body: [
+                WORK, WORK, WORK, WORK, WORK,
+                WORK, WORK, WORK, WORK, WORK,
+                CARRY, CARRY, CARRY, CARRY, CARRY,
+                CARRY, CARRY, CARRY, CARRY, CARRY,
+                MOVE, MOVE, MOVE, MOVE, MOVE,
+                MOVE, MOVE, MOVE, MOVE, MOVE,
+            ],
             condition: true
         },
         e25n13_recharger: {
-            max: 1,
+            max: 0,
             body: [CARRY, CARRY, MOVE], // OK
             condition: true
         },
-        // pickup energy to source center or storage
-        e25n13_pickuper2: {
-            max: 2,
-            body: [CARRY, CARRY, CARRY, CARRY, MOVE, MOVE], // OK
-            condition: true
-        },
-
         // controller upgrader
         e25n13_upgrader: {
             max: 1,
             body: [
-                WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK,
-                CARRY,
+                WORK, WORK, WORK, WORK, WORK,
+                WORK, WORK, WORK, WORK, WORK,
+                WORK, WORK, WORK, WORK, WORK,
+                CARRY, CARRY,
                 MOVE, MOVE, MOVE, MOVE, MOVE
             ],
             condition: true
         },
         e25n13_upgrader_recharger: {
-            max: 2,
-            body: [CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE], // OK
+            max: 1,
+            body: [
+                CARRY, CARRY, CARRY, CARRY, CARRY,
+                CARRY, CARRY, CARRY, CARRY, CARRY,
+                CARRY, CARRY,
+                MOVE, MOVE, MOVE, MOVE, MOVE,
+                MOVE
+            ], // OK
             condition: true
         },
         e25n13_builder: {
-            max: 2,
-            body: [WORK, WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE],
+            max: 1,
+            body: [
+                WORK, WORK, WORK, WORK, WORK,
+                WORK, WORK, WORK, WORK, WORK,
+                CARRY, CARRY, CARRY, CARRY, CARRY,
+                CARRY, CARRY, CARRY, CARRY, CARRY,
+                MOVE, MOVE, MOVE, MOVE, MOVE,
+                MOVE, MOVE, MOVE, MOVE, MOVE,
+            ],
             condition: true
         },
         e25n13_reparier: {
@@ -81,12 +107,6 @@ module.exports = function () {
             body: [WORK, CARRY, CARRY, MOVE, MOVE],
             condition: true
         },
-        e25n13_rampartbuilder: {
-            max: 1,
-            body: [WORK, CARRY, CARRY, MOVE, MOVE],
-            condition: true
-        },
-
         // e25n12
         e25n12_harvester: {
             max: 1,
@@ -94,13 +114,13 @@ module.exports = function () {
             condition: true
         },
         e25n12_carryer: {
-            max: 2,
+            max: 1,
             body: [
                 CARRY, CARRY, CARRY, CARRY, CARRY,
                 CARRY, CARRY, CARRY, CARRY, CARRY,
-                CARRY, CARRY,
+                CARRY, CARRY, CARRY, CARRY, CARRY,
                 MOVE, MOVE, MOVE, MOVE, MOVE,
-                MOVE
+                MOVE, MOVE, MOVE
             ],
             condition: true
         },
@@ -109,11 +129,35 @@ module.exports = function () {
             body: [WORK, CARRY, CARRY, CARRY, MOVE, MOVE],
             condition: true
         },
-
-        // e25n14
+        // e25n14 & e25n15
         e25n14_builder: {
-            max: 1,
+            max: 0,
             body: [WORK, CARRY, CARRY, CARRY,MOVE, MOVE],
+            condition: true
+        },
+        e25n15_harvester_1: {
+            max: 0,
+            body: [
+                WORK, WORK, WORK, WORK, WORK,
+                MOVE, MOVE, MOVE
+            ],
+            condition: true
+        },
+        e25n15_carryer_1: {
+            max: 0,
+            body: [
+                CARRY, CARRY, CARRY, CARRY, CARRY,
+                CARRY, CARRY, CARRY, CARRY, CARRY,
+                CARRY, CARRY, CARRY, CARRY, CARRY,
+                CARRY, CARRY, CARRY, CARRY, CARRY,
+                MOVE, MOVE, MOVE, MOVE, MOVE,
+                MOVE, MOVE, MOVE, MOVE, MOVE
+            ],
+            condition: true
+        },
+        e25n15_builder: {
+            max: 0,
+            body: [WORK, WORK, CARRY, CARRY, MOVE, MOVE],
             condition: true
         }
     });

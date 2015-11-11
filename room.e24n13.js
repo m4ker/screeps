@@ -7,9 +7,18 @@ module.exports = function () {
     army = Game.rooms.E24N13.find(FIND_HOSTILE_CREEPS);
 
     creep_create(Game.rooms.E24N13, {
-        draenor_extrecharger: {
-            max: 3,
+        e24n13_ext_1: {
+            max: 1,
             body: [CARRY, CARRY, CARRY, CARRY, MOVE, MOVE], // OK
+            condition: true
+        },
+        e24n13_ext_2: {
+            max: 1,
+            body: [
+                CARRY, CARRY, CARRY, CARRY, CARRY,
+                CARRY, CARRY, CARRY, CARRY, CARRY,
+                MOVE, MOVE, MOVE, MOVE, MOVE
+            ], // OK
             condition: true
         },
         guard: {
@@ -23,74 +32,71 @@ module.exports = function () {
                 ATTACK,ATTACK,MOVE,
                 ATTACK,ATTACK,MOVE,
                 ATTACK,ATTACK,MOVE,
-                //ATTACK,ATTACK,MOVE,
-                //ATTACK,ATTACK,MOVE
+                ATTACK,ATTACK,MOVE,
+                ATTACK,ATTACK,MOVE
             ],
             condition: army.length > 0
         },
-        draenor_harvester_1: {
-            max: 1,
-            body: [WORK, WORK, WORK, WORK, WORK, MOVE, MOVE, MOVE],
-            condition: true
-        },
-        draenor_harvester_2: {
-            max: 1,
-            body: [WORK, WORK, WORK, WORK, WORK, MOVE, MOVE, MOVE],
-            condition: true
-        },
-
-        // pickup energy to source center or storage
-        draenor_pickuper1: {
-            max: 2,
-            body: [CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE], // OK
-            condition: true
-        },
-        draenor_recharger: {
-            max: 1,
-            body: [CARRY, CARRY, CARRY, MOVE, MOVE], // OK
-            condition: true
-        },
-        // pickup energy to source center or storage
-        draenor_pickuper2: {
-            max: 2,
-            body: [CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE], // OK
-            condition: true
-        },
-        // controller upgrader
-        draenor_upgrader: {
+        e24n13_harvester_1 : {
             max: 1,
             body: [
                 WORK, WORK, WORK, WORK, WORK,
                 WORK, WORK, WORK, WORK, WORK,
                 WORK, WORK, WORK, WORK, WORK,
+                WORK,
                 CARRY, CARRY, CARRY, CARRY, CARRY,
-                CARRY,
+                CARRY, CARRY, CARRY, CARRY, CARRY,
+                CARRY, CARRY, CARRY, CARRY, CARRY,
+                CARRY, CARRY,
                 MOVE, MOVE, MOVE, MOVE, MOVE,
-                MOVE, MOVE
+                MOVE, MOVE, MOVE, MOVE, MOVE,
+                MOVE, MOVE, MOVE, MOVE, MOVE,
+                MOVE, MOVE,
             ],
             condition: true
         },
-        draenor_upgrader_recharger: {
+        e24n13_harvester_2 : {
+            max: 1,
+            body: [
+                WORK, WORK, WORK, WORK, WORK,
+                WORK, WORK, WORK, WORK, WORK,
+                WORK, WORK, WORK, WORK, WORK,
+                WORK,
+                CARRY, CARRY, CARRY, CARRY, CARRY,
+                CARRY, CARRY, CARRY, CARRY, CARRY,
+                CARRY, CARRY, CARRY, CARRY, CARRY,
+                CARRY, CARRY,
+                MOVE, MOVE, MOVE, MOVE, MOVE,
+                MOVE, MOVE, MOVE, MOVE, MOVE,
+                MOVE, MOVE, MOVE, MOVE, MOVE,
+                MOVE, MOVE,
+            ],
+            condition: true
+        },
+        // controller upgrader
+        e24n13_upgrader: {
+            max: 1,
+            body: [
+                WORK, WORK, WORK, WORK, WORK,
+                WORK, WORK, WORK, WORK, WORK,
+                WORK, WORK, WORK, WORK, WORK,
+                CARRY, CARRY, CARRY, CARRY,
+                MOVE, MOVE, MOVE, MOVE, MOVE,
+                MOVE, MOVE, MOVE, MOVE, MOVE
+            ],
+            condition: true
+        },
+        e24n13_upgrader_recharger: {
             max: 1,
             body: [
                 CARRY, CARRY, CARRY, CARRY, CARRY,
                 CARRY, CARRY, CARRY, CARRY, CARRY,
-                MOVE, MOVE, MOVE, MOVE, MOVE
+                CARRY, CARRY,
+                MOVE, MOVE, MOVE, MOVE, MOVE,
+                MOVE
             ], // OK
             condition: true
         },
-        /*
-         spawn_harvester : {
-         max : 1,
-         body : [WORK, WORK, WORK, WORK, WORK, MOVE, MOVE, MOVE, MOVE, MOVE],
-         condition: true
-         },
-         spawn_harvester2 : {
-         max : 1,
-         body : [WORK, WORK, WORK, WORK, WORK, MOVE, MOVE, MOVE, MOVE, MOVE],
-         condition: true
-         },
-         */
         e24n12_harvester_1 : {
             max: 1,
             body: [WORK, WORK, WORK, WORK, WORK, MOVE, MOVE, MOVE],
@@ -113,7 +119,7 @@ module.exports = function () {
             condition: true
         },
         e24n12_carryer_2 : {
-            max: 3,
+            max: 2,
             body: [
                 CARRY, CARRY, CARRY, CARRY, CARRY,
                 CARRY, CARRY, CARRY, CARRY, CARRY,
@@ -128,31 +134,23 @@ module.exports = function () {
             body: [WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE],
             condition: true
         },
-        draenor_reparier: {
+        e24n13_reparier: {
             max: 1,
             body: [WORK, CARRY, MOVE],
             condition: true
         },
-        e24n13_rampartbuilder: {
+        e24n13_builder: {
             max: 1,
             body: [
                 WORK, WORK, WORK, WORK, WORK,
-                CARRY, CARRY, CARRY, CARRY, CARRY,
-                MOVE, MOVE, MOVE, MOVE, MOVE
-            ],
-            condition: true
-        },
-        scout: {
-            max: 0,
-            body: [MOVE],
-            condition: true
-        },
-        draenor_builder: {
-            max: 3,
-            body: [
+                WORK, WORK, WORK, WORK, WORK,
                 WORK, WORK, WORK, WORK, WORK,
                 CARRY, CARRY, CARRY, CARRY, CARRY,
-                MOVE, MOVE, MOVE, MOVE, MOVE, MOVE
+                CARRY, CARRY, CARRY, CARRY, CARRY,
+                CARRY, CARRY, CARRY, CARRY, CARRY,
+                MOVE, MOVE, MOVE, MOVE, MOVE,
+                MOVE, MOVE, MOVE, MOVE, MOVE,
+                MOVE, MOVE, MOVE, MOVE, MOVE,
             ],
             condition: true
         }

@@ -22,7 +22,6 @@ module.exports = function (creep, room, works, energy) {
      ]
      */
     if (creep.carry.energy == 0) {
-        //creep.say(1);
         if (energy instanceof Structure) {
             if (energy.transferEnergy(creep) == ERR_NOT_IN_RANGE) {
                 if (energy.room.name != creep.room.name) {
@@ -58,21 +57,22 @@ module.exports = function (creep, room, works, energy) {
             }
         } else {
             // do nothing
-
             // 写到这里是不对的，应该增加闲置行为的参数
-            if ((creep.memory.role == 'upgrader'||creep.memory.role == 'draenor_upgrader') && !creep.pos.isNearTo(creep.room.controller)) {
+            if ((
+                    creep.memory.role == 'e24n13_upgrader'
+                    ||creep.memory.role == 'e23n14_upgrader'
+                    ||creep.memory.role == 'e25n13_upgrader'
+                    ||creep.memory.role == 'e22n15_upgrader'
+                ) && !creep.pos.isNearTo(creep.room.controller)) {
                 creep.moveTo(creep.room.controller);
             }
         }
     } else {
-
         //console.log(creep.memory.role);
         if (creep.room.name == room.name) {
-
             // go to work
             for (i in works) {
                 if (works[i].action == 'build') {
-                    //creep.say(5);
                     var targets = creep.room.find(FIND_CONSTRUCTION_SITES);
                     if(targets.length) {
                         if (targets[0].room.name == creep.room.name) {
@@ -87,7 +87,6 @@ module.exports = function (creep, room, works, energy) {
                         }
                     }
                 } else if (works[i].action == 'repair') {
-                    //creep.say(6);
                     if (creep.room.name == works[i].target.room.name) {
                         result = creep.repair(works[i].target);
                         if (result == OK) {
@@ -101,27 +100,23 @@ module.exports = function (creep, room, works, energy) {
                     }
                     break;
                 } else if (works[i].action == 'upgrade') {
-                    //creep.say(7);
                     if (creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
                         creep.moveTo(creep.room.controller);
                     }
                     break;
                 } else if (works[i].action == 'harvest') {
-                    //creep.say(7);
-                    if (creep.harvest(works[i].target) == ERR_NOT_IN_RANGE) {
-                        creep.moveTo(works[i].target);
+                    if (creep.room.name == works[i].target.room.name) {
+                        if (creep.harvest(works[i].target) == ERR_NOT_IN_RANGE) {
+                            creep.moveTo(works[i].target);
+                        }
+                    } else {
+                        move_to_room(creep, works[i].target.room);
                     }
                     break;
                 }
             }
         } else {
-            //creep.say(4);
-            //console.log(creep);
-            //console.log(room);
-            // go to room
-            //console.log(room);
             move_to_room(creep, room);
-            //creep.moveTo(new RoomPosition(20,20,room.name));
         }
     }
     if(debug) {
