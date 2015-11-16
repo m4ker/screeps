@@ -4,6 +4,7 @@
  * todo : carry energy to home if no picker
  */
 var debug = false;
+var move_to_room =  require('helper.move_to_room2');
 module.exports = function (creep, to_room, source_no) {
     if (debug)
         cpu_usage = Game.getUsedCpu();
@@ -23,9 +24,9 @@ module.exports = function (creep, to_room, source_no) {
     } else {
         //creep.say(1);
         // move to the target room
-        //move_to_room(creep, Game.rooms[to_toom]);
-        var pos = new RoomPosition(20, 20, to_room);
-        creep.moveTo(pos) ;
+        move_to_room(creep, to_room);
+        //var pos = new RoomPosition(20, 20, to_room);
+        //creep.moveTo(pos) ;
     }
     if (debug) {
         cpu_usage2 = Game.getUsedCpu() - cpu_usage;

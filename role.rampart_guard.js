@@ -1,26 +1,28 @@
 /*
  * 守卫
  */
-module.exports = function (creep, rampart) {
-    creep_on_rampart = false;
-    list = creep.pos.lookForAt('structure');
-    for (o of list) {
-        if (o.structureType == STRUCTURE_RAMPART) {
-            creep_at_rampart = true;
+module.exports = function (creep, ramparts) {
+    in_position = false;
+    empty = [];
+    for (i in ramparts) {
+        if (creep.pos.x == ramparts[i].pos.x && creep.pos.y == ramparts[i].pos.y) {
+            in_position = true;
+        }
+        if (ramparts[i].pos.lookFor('creep').length == 0) {
+            empty.push(ramparts[i]);
         }
     }
-    if (creep_on_rampart) {
-        range_attack = true;
-        if (range_attack) {
-            army = creep.pos.findInRange(FIND_HOSTILE_CREEPS, 3);
-            if (army[0] != undefined) {
-                // rangeAttack
-                creep.rangeAttach(army[0]);
-            }
-        } else {
-            // todo:attack
-        }
+    if (in_position) {
+        army = creep.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
+        creep.attack(army);
     } else {
-        creep.moveTo(rampart);
+        if (empty.length > 0) {
+            creep.moveTo(empty[0]);
+        } else {
+            creep.moveTo(ramparts[0]);
+        }
     }
 }
+
+
+

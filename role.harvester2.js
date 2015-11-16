@@ -4,7 +4,7 @@
  * todo : carry energy to home if no picker
  */
 var debug = false;
-var move_to_room =  require('helper.move_to_room');
+var move_to_room =  require('helper.move_to_room2');
 module.exports = function (creep, source) {
     if (debug)
         cpu_usage = Game.getUsedCpu();

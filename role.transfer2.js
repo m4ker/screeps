@@ -5,7 +5,7 @@
  *
  */
 var debug = false;
-var move_to_room =  require('helper.move_to_room');
+var move_to_room =  require('helper.move_to_room2');
 module.exports = function (creep, from, to) {
 
     if (creep.carry.energy == 0) {
@@ -26,15 +26,18 @@ module.exports = function (creep, from, to) {
             if (debug)
                 cpu_usage = Game.getUsedCpu();
             if (creep.room.name != from.roomName) {
-                move_to_room(creep, Game.rooms[from.roomName]);
+                move_to_room(creep, from.roomName);
             } else {
 
                 // find and pickup
+
                 var EN = creep.pos.findClosestByRange(FIND_DROPPED_ENERGY, {
                     filter:function(object) {
                         return object.pos.isNearTo(from) && object.energy > creep.carryCapacity;
                     }
                 });
+
+                //var EN = creep.pos.findClosestByRange(FIND_DROPPED_ENERGY);
                 if (EN) {
                     if (creep.pickup(EN) == ERR_NOT_IN_RANGE) {
                         creep.moveTo(EN);
@@ -54,7 +57,7 @@ module.exports = function (creep, from, to) {
                     cpu_usage = Game.getUsedCpu();
 
                 //creep.moveToRoom(from);
-                move_to_room(creep, from);
+                move_to_room(creep, from.name);
 
                 if (debug) {
                     cpu_usage2 = Game.getUsedCpu() - cpu_usage;
@@ -97,7 +100,7 @@ module.exports = function (creep, from, to) {
             } else {
                 //if (creep.name == 'test') console.log('C');
                 //creep.moveToRoom(to.room);
-                move_to_room(creep, to.room);
+                move_to_room(creep, to.room.name);
             }
             if (debug) {
                 cpu_usage2 = Game.getUsedCpu() - cpu_usage;
@@ -121,18 +124,40 @@ module.exports = function (creep, from, to) {
         } else {
             if (debug)
                 cpu_usage = Game.getUsedCpu();
-            var SR = creep.pos.findClosestByRange(FIND_MY_STRUCTURES, {
-                filter: function(object){
-                    if(object.structureType != to) {
-                        return false;
+
+            if (to instanceof Array) {
+                var SR = creep.pos.findClosestByRange(FIND_MY_STRUCTURES, {
+                    filter: function(object){
+                        var in_arr = false;
+                        for (var j in to) {
+                            if(object.structureType == to[j]) {
+                                in_arr = true;
+                            }
+                        }
+                        if(!in_arr) {
+                            return false;
+                        }
+                        if(object.energy < object.energyCapacity) {
+                            return true;
+                        } else {
+                            return false;
+                        }
                     }
-                    if(object.energy < object.energyCapacity) {
-                        return true;
-                    } else {
-                        return false;
+                });
+            } else {
+                var SR = creep.pos.findClosestByRange(FIND_MY_STRUCTURES, {
+                    filter: function(object){
+                        if(object.structureType != to) {
+                            return false;
+                        }
+                        if(object.energy < object.energyCapacity) {
+                            return true;
+                        } else {
+                            return false;
+                        }
                     }
-                }
-            });
+                });
+            }
 
             if(creep.transferEnergy(SR) == ERR_NOT_IN_RANGE) {
                 creep.moveTo(SR);
