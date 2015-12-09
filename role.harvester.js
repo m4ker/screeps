@@ -9,24 +9,26 @@ module.exports = function (creep, to_room, source_no) {
     if (debug)
         cpu_usage = Game.getUsedCpu();
     if (creep.room.name == to_room) {
-        //creep.say(1);
         var sources = creep.room.find(FIND_SOURCES);
-        //if(creep.carry.energy < creep.carryCapacity) {
-        // harvest
-        if(creep.harvest(sources[source_no]) == ERR_NOT_IN_RANGE) {
-            // move to energy
-            creep.moveTo(sources[source_no]);
+        //console.log(sources[source_no]);
+
+        if(creep.carry.energy < creep.carryCapacity) {
+            if (creep.name == 'h957')console.log('a')
+            // harvest
+            result=creep.harvest(sources[source_no])
+            //console.log(creep.name + ' ' + result);
+            if(result == ERR_NOT_IN_RANGE) {
+                // move to energy
+                creep.moveTo(sources[source_no]);
+            }
+        } else {
+            if (creep.name == 'h957')console.log('b')
+            // drop energy
+            creep.dropEnergy();
         }
-        //} else {
-        // drop energy
-        //creep.dropEnergy();
-        //}
     } else {
-        //creep.say(1);
         // move to the target room
         move_to_room(creep, to_room);
-        //var pos = new RoomPosition(20, 20, to_room);
-        //creep.moveTo(pos) ;
     }
     if (debug) {
         cpu_usage2 = Game.getUsedCpu() - cpu_usage;

@@ -55,7 +55,12 @@ module.exports = function (creep, room, works, energy) {
                     creep.moveTo(EN);
                 }
             }
-        } else {
+        }else if (energy instanceof Energy) {
+            if (creep.pickup(energy) == ERR_NOT_IN_RANGE) {
+                creep.moveTo(energy);
+            }
+        }
+        else {
             // do nothing
             // 写到这里是不对的，应该增加闲置行为的参数
             if ((
